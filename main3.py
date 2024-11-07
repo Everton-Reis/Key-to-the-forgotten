@@ -1,5 +1,5 @@
 import pygame
-from mapa import desenhar_mapa, obter_plataformas
+from mapa import desenhar_mapa, obter_plataformas, mover_mapa
 
 plataformas = obter_plataformas()
 
@@ -58,9 +58,8 @@ class Player(pygame.sprite.Sprite):
                 if self.dx < 0:
                     self.rect.left = plataforma.right
 
-        # reseta as velocidades
         self.dx = 0
-        self.dy = 0
+
 
     def on_event(self, event: pygame.event.Event):
         if event.type == pygame.KEYDOWN:
@@ -97,7 +96,7 @@ class GameManager:
         self.screen.fill((0, 0, 0))
 
         # Caminho para a imagem do jogador
-        image_path = r"C:\Users\evert\Documents\TrabalhoLp_A2\0.png"  # Altere para o caminho correto
+        image_path = r"0.png"  # Altere para o caminho correto
 
         # iniciando o personagem
         self.player = Player(self.width // 2, self.height // 2, 40, 40, image_path)
@@ -110,15 +109,24 @@ class GameManager:
         self.clock = None
         self.is_running = False
 
+        self.camera_speed = 50 #quanto menor o numero, mais rapido
+        self.time = 0
+
     def run(self):
         # iniciar o jogo
         self.clock = pygame.time.Clock()
         self.is_running = True
         while self.is_running:
+            delta = self.clock.tick(30)
+            self.time += delta
+
+            if self.time > self.camera_speed:
+                mover_mapa(self.plataformas)
+                self.time = 0
+
             self.event()
             self.update()
             self.draw()
-            self.clock.tick(30)
         pygame.quit()
     
     def event(self):
@@ -145,7 +153,7 @@ class GameManager:
     def draw(self):
         # renderização
         self.screen.fill((0, 0, 0))
-        desenhar_mapa(self.screen)  # Desenha o mapa
+        desenhar_mapa(self.screen, self.plataformas, self.height)
         self.player.draw(self.screen)
         pygame.display.flip()
 
