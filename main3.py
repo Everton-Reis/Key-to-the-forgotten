@@ -1,5 +1,5 @@
 import pygame
-from mapa2 import Mapa
+from mapa import Mapa
 
 mapa_layout = [
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
