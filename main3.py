@@ -1,7 +1,31 @@
 import pygame
-from mapa import desenhar_mapa, obter_plataformas
+from mapa2 import Mapa
 
-plataformas = obter_plataformas()
+mapa_layout = [
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+]
+mapa = Mapa(mapa_layout)
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height, image_path):
@@ -16,21 +40,21 @@ class Player(pygame.sprite.Sprite):
         self.dx = 0
         self.dy = 0
         self.velocidade = 3
-        self.on_ground = False # verificar se estpa no chão
+        self.on_ground = False
 
-        # carregar imagem do jogador e redimensiona
+        # Carregar imagem do jogador e redimensiona
         self.image = pygame.image.load(image_path)
         self.image = pygame.transform.scale(self.image, (40, 40))
 
-        # define o retangulo de colisão e posição inicial do sprite
+        # Define o retângulo de colisão e posição inicial do sprite
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
 
-    def draw(self, screen):
-        #pygame.draw.rect(screen, self.color, self.rect)
-        screen.blit(self.image, self.rect)
-    
+    def draw(self, screen, camera_offset):
+        # Aplica o deslocamento da câmera
+        screen.blit(self.image, (self.rect.x - camera_offset[0], self.rect.y - camera_offset[1]))
+
     def update(self, plataformas):
         # Aplicar gravidade
         self.speed_y += self.gravity_y
@@ -39,26 +63,26 @@ class Player(pygame.sprite.Sprite):
         # Verificar colisão vertical (com plataformas)
         self.on_ground = False
         for plataforma in plataformas:
-            if self.rect.colliderect(plataforma): # colisão horizontal
-                if self.speed_y > 0: # ta caindo
-                    self.rect.bottom = plataforma.top # para de cair
-                    self.speed_y = 0 # reseta a velocidade vertical
-                    self.on_ground = True # ta no chão
-                    self.jump_count = 0 # reseta os saltos
-                elif self.speed_y < 0: # ta subindo
-                    self.rect.top = plataforma.bottom # impedir que suba
-                    self.speed_y = 0 # reseta a velocidade vertical
+            if self.rect.colliderect(plataforma):  # colisão vertical
+                if self.speed_y > 0:  # Descendo
+                    self.rect.bottom = plataforma.top  # Para de cair
+                    self.speed_y = 0  # Reseta a velocidade vertical
+                    self.on_ground = True  # No chão
+                    self.jump_count = 0  # Reseta os saltos
+                elif self.speed_y < 0:  # Subindo
+                    self.rect.top = plataforma.bottom  # Impede de subir
+                    self.speed_y = 0  # Reseta a velocidade vertical
 
-        # movimentação horizontal 
+        # Movimentação horizontal
         self.rect.x += self.dx
         for plataforma in plataformas:
-            if self.rect.colliderect(plataforma):
+            if self.rect.colliderect(plataforma):  # Colisão horizontal
                 if self.dx > 0:
                     self.rect.right = plataforma.left
                 if self.dx < 0:
                     self.rect.left = plataforma.right
 
-        # reseta as velocidades
+        # Reseta as velocidades
         self.dx = 0
         self.dy = 0
 
@@ -78,13 +102,7 @@ class Player(pygame.sprite.Sprite):
             self.dx = -self.velocidade
         if key_map[pygame.K_d]:  # Move para a direita
             self.dx = self.velocidade
-        # if key_map[pygame.K_w]:  # Move para cima
-        #     self.dy = -self.velocidade
-        # if key_map[pygame.K_s]:  # Move para baixo
-        #     self.dy = self.velocidade
 
-class Ground:
-    pass
 class GameManager:
 
     def __init__(self) -> None:
@@ -92,26 +110,26 @@ class GameManager:
 
         self.width = 800
         self.height = 600
+        
         screen_size = (self.width, self.height)
         self.screen = pygame.display.set_mode(screen_size)
         self.screen.fill((0, 0, 0))
 
-        # Caminho para a imagem do jogador
-        image_path = r"C:\Users\evert\Documents\TrabalhoLp_A2\0.png"  # Altere para o caminho correto
+        image_path = r"C:\Users\evert\Documents\TrabalhoLp_A2\0.png"
 
-        # iniciando o personagem
+        # Inicializando o personagem
         self.player = Player(self.width // 2, self.height // 2, 40, 40, image_path)
-        self.plataformas = obter_plataformas()
+        self.plataformas = mapa.obter_plataformas()
 
-        # Criando o grupo de sprites (no caso, só o jogador)
+        # Grupo de sprites
         self.all_sprites = pygame.sprite.Group()
         self.all_sprites.add(self.player)
 
         self.clock = None
         self.is_running = False
+        self.camera_offset = [0, 0]
 
     def run(self):
-        # iniciar o jogo
         self.clock = pygame.time.Clock()
         self.is_running = True
         while self.is_running:
@@ -120,9 +138,14 @@ class GameManager:
             self.draw()
             self.clock.tick(30)
         pygame.quit()
-    
+
+    def atualizar_camera(self):
+        # Mantém a câmera centralizada no jogador horizontalmente
+        self.camera_offset[0] = self.player.rect.centerx - self.width // 2
+        # Verticalmente, a câmera seguirá o jogador, mas com um "piso" para evitar ir além do chão
+        self.camera_offset[1] = min(self.player.rect.centery - self.height // 2, self.height - 100) # -100 pois são dois blocos
+        #min(self.player.rect.centery - self.height // 2, 0)
     def event(self):
-        # Eventos
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
@@ -138,15 +161,17 @@ class GameManager:
 
     def update(self):
         self.player.update(self.plataformas)
-    
-    def collision_detetion(self):
-        pass
-    
+        self.atualizar_camera()
+
     def draw(self):
-        # renderização
         self.screen.fill((0, 0, 0))
-        desenhar_mapa(self.screen)  # Desenha o mapa
-        self.player.draw(self.screen)
+        
+        # Desenha o mapa com deslocamento da câmera
+        mapa.desenhar(self.screen, self.camera_offset)  
+        
+        # Desenha o jogador com deslocamento da câmera
+        self.player.draw(self.screen, self.camera_offset)
+        
         pygame.display.flip()
 
 if __name__ == '__main__':
