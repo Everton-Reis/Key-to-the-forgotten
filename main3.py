@@ -1,8 +1,6 @@
 import pygame
 from mapa import desenhar_mapa, obter_plataformas, mover_mapa
 
-plataformas = obter_plataformas()
-
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height, image_path):
         super().__init__()
@@ -15,7 +13,7 @@ class Player(pygame.sprite.Sprite):
         self.jump_count_max = 3
         self.dx = 0
         self.dy = 0
-        self.velocidade = 3
+        self.velocidade = 5
         self.on_ground = False # verificar se estpa no chão
 
         # carregar imagem do jogador e redimensiona
@@ -24,9 +22,8 @@ class Player(pygame.sprite.Sprite):
 
         # define o retangulo de colisão e posição inicial do sprite
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-
+        self.rect.topleft = (x,y)
+        
     def draw(self, screen):
         #pygame.draw.rect(screen, self.color, self.rect)
         screen.blit(self.image, self.rect)
@@ -89,8 +86,8 @@ class GameManager:
     def __init__(self) -> None:
         pygame.init()
 
-        self.width = 800
-        self.height = 600
+        self.width = 1200
+        self.height = 800
         screen_size = (self.width, self.height)
         self.screen = pygame.display.set_mode(screen_size)
         self.screen.fill((0, 0, 0))
@@ -109,18 +106,21 @@ class GameManager:
         self.clock = None
         self.is_running = False
 
-        self.camera_speed = 50 #quanto menor o numero, mais rapido
+        self.camera_speed = 0.001 #quanto menor o numero, mais rapido
         self.time = 0
+
+        self.camera_offset = [0,0]
+
 
     def run(self):
         # iniciar o jogo
         self.clock = pygame.time.Clock()
         self.is_running = True
         while self.is_running:
-            delta = self.clock.tick(30)
+            delta = self.clock.tick(40)
             self.time += delta
 
-            if self.time > self.camera_speed:
+            if self.time >= self.camera_speed:
                 mover_mapa(self.plataformas)
                 self.time = 0
 
@@ -128,6 +128,11 @@ class GameManager:
             self.update()
             self.draw()
         pygame.quit()
+
+    def atualizar_camera(self):
+        self.camera_offset[0] = self.player.rect.centerx - self.width // 2
+        self.camera_offset[1] = min(self.player.rect.centery - self.height // 2, self.height - 100) # -100 pois são dois blocos
+        #min(self.player.rect.centery - self.height // 2, 0)
     
     def event(self):
         # Eventos
@@ -146,6 +151,7 @@ class GameManager:
 
     def update(self):
         self.player.update(self.plataformas)
+        self.atualizar_camera()
     
     def collision_detetion(self):
         pass
@@ -153,7 +159,7 @@ class GameManager:
     def draw(self):
         # renderização
         self.screen.fill((0, 0, 0))
-        desenhar_mapa(self.screen, self.plataformas, self.height)
+        desenhar_mapa(self.screen, self.plataformas, self.height, self.camera_offset)
         self.player.draw(self.screen)
         pygame.display.flip()
 
