@@ -1,20 +1,15 @@
 import pygame
 import math
 
-pygame.init()
-WIDTH = 800
-HEIGHT = 600
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-
-
 class Bullet:
 
-	def __init__(self, begin, destiny, damage):
+	def __init__(self, begin, destiny, damage, color):
 		self.speed = 10
 		self.damage = 5
 		self.shooted = False
 		self.begin = begin
 		self.destiny = destiny
+		self.color = color
 		self.rect = pygame.Rect(self.begin[0], self.begin[1], 10, 10)
 
 		dx = self.destiny[0] - self.begin[0]
@@ -28,11 +23,17 @@ class Bullet:
 		self.direction_y = (dy / distance) * self.speed
 
 	def take_damage(self, object):
-		if self.rect.colliderect(object.rect):
+		if self.rect.colliderect(object.rect) and object.health:
 			object.decrement_health(self.damage)
+			self.shooted = False
+
+	def platform_collide(self, platforms):
+		for platform in platforms:
+			if self.rect.colliderect(platform.rect):
+				self.shooted = False
 
 	def load(self, screen):
-		pygame.draw.rect(screen, (188,0,0), self.rect)
+		pygame.draw.rect(screen, self.color, self.rect)
 
 
 	def move(self):
@@ -58,7 +59,7 @@ class Bullets():
 			elif bullet.rect.y < -100:
 				self.bullets.remove(bullet)
 
-	def shot(self, screen):
+	def shoot(self, screen, objects, platforms, who):
 		if len(self.bullets) == 0:
 			return
 
@@ -66,98 +67,12 @@ class Bullets():
 			if bullet.shooted == True:
 				bullet.load(screen)
 				bullet.move()
+				#bullet.platform_collide(platforms)
+				if who == 0: #o player que está atirando
+					for enemy in objects.enemies:
+						bullet.take_damage(enemy)
+
+				elif who == 1: #o inimigo que está atirando
+					bullet.take_damage(objects)
 
 
-class Player:
-
-	def __init__(self, x, y):
-		self.rect = pygame.Rect(x,y, 50, 50)
-		self.gravity = 2
-		self.speed_x = 5
-		self.speed_y = 0
-		self.max_jumps = 1
-		self.jumps = 0
-		self.bullets = Bullets()
-
-	def load(self, screen):
-		pygame.draw.rect(screen, (0,0,188), self.rect)
-
-	def update(self):
-		self.speed_y += self.gravity
-		self.rect.y += self.speed_y
-
-		if self.rect.right > WIDTH:
-			self.rect.right = WIDTH
-		if self.rect.left < 0:
-			self.rect.left = 0
-		if self.rect.top < 0:
-			self.rect.top = 0
-		if self.rect.bottom > HEIGHT:
-			self.rect.bottom = HEIGHT
-			self.speed_y = 0
-			self.jumps = 0
-
-	def move(self, direction):
-		if direction == "right":
-			self.rect.x += self.speed_x
-		elif direction == "left":
-			self.rect.x -= self.speed_x
-
-	def jump(self, howmuch):
-		if self.jumps >= self.max_jumps:
-			return
-
-		self.speed_y += howmuch
-		self.jumps += 1
-
-	def on_event(self, event, mouse):
-		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_SPACE:
-				self.jump(-20)
-
-		if event.type == pygame.MOUSEBUTTONDOWN:
-			if event.button == 1:
-				bullet = Bullet((self.rect.x, self.rect.y),
-					(mouse.get_pos()[0], mouse.get_pos()[1]),
-														5)
-				bullet.shooted = True
-				self.bullets.bullets.append(bullet)
-
-
-	def on_hold(self, keys):
-
-		if keys[pygame.K_a]:
-			self.move("left")
-
-		if keys[pygame.K_d]:
-			self.move("right")
-		
-
-
-player = Player(0,0)
-clock = pygame.time.Clock()
-
-
-r = True
-
-while r:
-	screen.fill((255,255,255))
-	clock.tick(30)
-	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			r = False
-
-		player.on_event(event, pygame.mouse)
-
-
-	keys = pygame.key.get_pressed()
-	player.update()
-	player.load(screen)
-	player.on_hold(keys)
-	player.bullets.shot(screen)
-
-
-	pygame.display.flip()
-
-
-pygame.quit()
