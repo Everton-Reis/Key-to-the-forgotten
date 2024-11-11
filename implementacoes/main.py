@@ -21,6 +21,7 @@ class Player:
 		self.speed_x = 8
 		self.speed_y = 0
 		self.max_jumps = 1
+		self.damage = 10
 		self.jumps = 0
 		self.health = 100
 		self.alive = True
@@ -134,12 +135,12 @@ while r:
 	player.load(screen)
 	player.on_hold(keys)
 
-	player.bullets.shoot(screen, enemies,[], who = 0)
+	player.bullets.shoot(screen, enemies.enemies,[], player)
 
 	enemies.load(screen)
 	enemies.move(player)
 	enemies.mov_attack(player)
-	enemies.shoot_bullets(player, screen)
+	enemies.shoot_bullets(player, [], screen)
 	enemies.check_die()
 
 	pygame.display.flip()

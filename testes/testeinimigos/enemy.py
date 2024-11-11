@@ -42,12 +42,41 @@ class BaseEnemy():
 		if self.alive == False:
 			return
 
-		dx = self.rect.x - player.rect.x
+		if player.rect.y - 100 < self.rect.y < player.rect.y + 100:
+			dx = self.rect.x - player.rect.x
 
-		if dx > 0:
-			self.rect.x -= self.speed
-		elif dx < 0:
-			self.rect.x += self.speed
+			if dx > 0:
+				self.dx -= self.speed
+			elif dx < 0:
+				self.dx += self.speed
+
+
+	def update(self, plataforms):
+		if self.alive == False:
+			return
+
+		self.speed_y += self.gravity_y
+		self.rect.y += self.speed_y
+
+		for plataform in plataforms:
+			if self.rect.colliderect(plataform):
+				if self.speed_y > 0:
+					self.rect.bottom = plataform.top
+					self.speed_y = 0
+				elif self.speed_y < 0:
+					self.rect.top = plataform.bottom
+					self.speed_y = 0
+
+		self.rect.x += self.dx
+		for plataform in plataforms:
+			if self.rect.colliderect(plataform):
+				if self.dx > 0:
+					self.rect.right = plataform.left
+				if self.dx < 0:
+					self.rect.left = plataform.right
+
+		self.dx = 0
+		self.dy = 0
 
 
 class WeakMovingEnemy(BaseEnemy):
@@ -91,11 +120,13 @@ class ShootingEnemy(BaseEnemy):
 	def attack(self, player, screen):
 		if self.alive == False:
 			return
-		bullet = libat.Bullet((self.rect.x, self.rect.y),
-					(player.rect.x, player.rect.y),
-						self.damage, (0,255,100))
-		bullet.shooted = True
-		self.bullets.bullets.append(bullet)
+
+		if player.rect.y - 100 < self.rect.y < player.rect.y + 100:
+			bullet = libat.Bullet((self.rect.x, self.rect.y),
+						(player.rect.x, player.rect.y),
+							self.damage, (0,255,100))
+			bullet.shooted = True
+			self.bullets.bullets.append(bullet)
 
 
 class Enemies():
@@ -134,6 +165,12 @@ class Enemies():
 				self.shoot_enemies.append(choice)
 
 
+	def update(self, plataforms):
+		self.enemies = self.mov_enemies + self.shoot_enemies
+
+		for enemy in self.enemies:
+			enemy.update(plataforms)
+
 	def load(self, screen):
 		self.enemies = self.mov_enemies + self.shoot_enemies
 
@@ -143,7 +180,6 @@ class Enemies():
 
 	def mov_attack(self, player):
 		for enemy in self.mov_enemies:
-			enemy.move(player)
 			enemy.attack(player)
 
 	def shoot_attack(self, player, screen):
