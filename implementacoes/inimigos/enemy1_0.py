@@ -174,4 +174,3 @@ class Enemies():
 
 				if isinstance(enemy, ShootingEnemy) and len(enemy.bullets.bullets) == 0:
 						self.shoot_enemies.remove(enemy)
-

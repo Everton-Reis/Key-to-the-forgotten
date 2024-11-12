@@ -3,6 +3,7 @@ import pygame
 from mapa import Map
 import followmouse as libat
 import enemy as liben
+import lifebar as Life
 
 mapa1 = Map()
 
@@ -14,7 +15,8 @@ class Player:
         self.gravity_y = 0.5 # pixels^2 / frame
         self.speed_y = 0
         self.speed_x = 4
-        self.health = 100
+        self.health = 1000
+        self.MAX_HEALTH = 1000
         self.damage = 5
         self.jump_count = 0
         self.jump_count_max = 4
@@ -89,6 +91,11 @@ class Player:
         self.health -= howmuch
         self.die()
 
+    def increment_health(self, howmuch):
+        self.health += howmuch
+        if self.health >= self.MAX_HEALTH:
+            self.health = self.MAX_HEALTH
+
     def die(self):
         if self.health <= 0:
             self.alive = False
@@ -109,6 +116,8 @@ class GameManager:
 
         # Objetos
         self.player = Player(self.width // 2, self.height // 2, 25, 25)
+        self.lifebar = Life.LifeBar(self.player, self.screen)
+
         self.plataforms = mapa1.give_plataforms()
         self.standing_plataforms = mapa1.standing_plataforms
 
@@ -142,11 +151,12 @@ class GameManager:
                 time_map = 0
 
             if time_shoot_enemy >= self.shoot_speed:
-                self.enemies.shoot_attack(self.player, self.screen)
+                self.enemies.shoot_attack(self.player, self.plataforms, self.screen)
                 time_shoot_enemy = 0
 
             self.event()
             self.update()
+            self.lifebar.update()
             self.draw()
         pygame.quit()
 
@@ -178,8 +188,7 @@ class GameManager:
         self.player.bullets.shoot(self.screen, self.enemies.enemies, self.plataforms, self.player)
         self.enemies.load(self.screen)
         self.enemies.shoot_bullets(self.player, self.plataforms, self.screen)
-        self.enemies.mov_attack(self.player)
-        self.enemies.move(self.player)
+        self.enemies.mov_attack(self.player, self.plataforms)
         self.enemies.check_die()
 
         mapa1.draw_plataforms(self.screen, self.plataforms, self.height, self.camera_offset)
@@ -187,6 +196,8 @@ class GameManager:
         coords_text = f"Posição do jogador: ({self.player.rect.x}, {self.player.rect.y})"
         coords_surface = self.font.render(coords_text, True, (255, 255, 0))  # Texto na cor preta
         self.screen.blit(coords_surface, (10, 10))  # Desenha no canto superior esquerdo da tela
+
+        self.lifebar.life_bar_health()
 
         pygame.display.flip()
 

@@ -4,7 +4,7 @@ import math
 
 #sys.path.append("../inimigos")
 
-import enemy as liben
+import enemy1_0 as liben
 
 class Bullet:
 

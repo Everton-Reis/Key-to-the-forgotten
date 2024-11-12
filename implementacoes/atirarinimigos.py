@@ -4,7 +4,7 @@ import sys
 sys.path.append('./atirar')
 sys.path.append('./inimigos')
 
-import enemy as liben
+import enemy1_0 as liben
 import followmouse as libat
 
 pygame.init()
