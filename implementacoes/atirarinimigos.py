@@ -1,4 +1,5 @@
 import pygame
+import math
 import sys
 
 sys.path.append('./atirar')
@@ -90,7 +91,12 @@ class Player:
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if event.button == 1:
-				bullet = libat.Bullet((self.rect.center[0], self.rect.center[1]),
+				angle = self.weapon.get_angle_to_mouse(mouse.get_pos())
+				distance = 50 #ajustar para que o tiro pareça sair da ponta da arma
+				x = self.weapon.position[0] + distance * math.cos(math.radians(-(angle + 90)))
+				y = self.weapon.position[1] + distance * math.sin(math.radians(-(angle + 90)))
+
+				bullet = libat.Bullet((x, y),
 					(mouse.get_pos()[0], mouse.get_pos()[1]),
 														5,
 														(10,10,10))
