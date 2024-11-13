@@ -23,7 +23,7 @@ background1_sprite_group = pygame.sprite.Group()
 
 
 # Map
-tmx_data = load_pygame('data/tmx/mapa1.tmx') # carrega o arquivo com o mapa
+tmx_data = load_pygame('data/tmx/mapa_fase1.tmx') # carrega o arquivo com o mapa
 visible_layers = tmx_data.layernames #pega as camadas visíveis (nesse caso, as com sprites)
 correction = 90 - ROWS # Correção da Altura para encaixar na Tela (Temporário)
 
