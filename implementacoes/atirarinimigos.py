@@ -3,9 +3,11 @@ import sys
 
 sys.path.append('./atirar')
 sys.path.append('./inimigos')
+sys.path.append('./weapon')
 
 import enemy1_0 as liben
 import followmouse as libat
+import weapon as wp
 
 pygame.init()
 WIDTH = 800
@@ -15,7 +17,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 class Player:
 
-	def __init__(self, x, y):
+	def __init__(self, x, y, weapon_image = None):
 		self.rect = pygame.Rect(x,y, 50, 50)
 		self.gravity = 2
 		self.speed_x = 8
@@ -28,11 +30,21 @@ class Player:
 		self.dx = 0
 		self.bullets = libat.Bullets()
 
-	def load(self, screen):
+		if weapon_image != None:
+			self.weapon = wp.Weapon(self, weapon_image, (100,100))
+			self.weapon_image = weapon_image
+			self.weapon.create_weapon()
+
+
+	def load(self, screen, mouse):
 		if self.alive == False:
 			return
 
 		pygame.draw.rect(screen, (0,0,188), self.rect)
+
+		if self.weapon_image != None:
+			self.weapon.point_mouse(mouse, screen)
+
 
 	def update(self, enemies):
 		self.speed_y += self.gravity
@@ -78,7 +90,7 @@ class Player:
 
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if event.button == 1:
-				bullet = libat.Bullet((self.rect.x, self.rect.y),
+				bullet = libat.Bullet((self.rect.center[0], self.rect.center[1]),
 					(mouse.get_pos()[0], mouse.get_pos()[1]),
 														5,
 														(10,10,10))
@@ -99,7 +111,8 @@ class Player:
 
 
 
-player = Player(0,0)
+image = "./weapon/weapon.png"
+player = Player(0,0, image)
 
 enemies = liben.Enemies()
 enemy1 = liben.WeakMovingEnemy(400,HEIGHT - 100)
@@ -130,10 +143,13 @@ while r:
 		time = 0
 
 
+	mouse_pos = pygame.mouse.get_pos()
 	keys = pygame.key.get_pressed()
+
 	player.update(enemies)
-	player.load(screen)
+	player.load(screen, mouse_pos)
 	player.on_hold(keys)
+
 
 	player.bullets.shoot(screen, enemies.enemies,[], player)
 
