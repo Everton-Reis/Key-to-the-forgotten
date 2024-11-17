@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="35" height="90" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="54">
+ <editorsettings>
+  <export target="mapa_fase1.tmx" format="tmx"/>
+ </editorsettings>
  <tileset firstgid="1" source="cavern_tiles.tsx"/>
  <layer id="4" name="background 2" width="35" height="90" visible="0">
   <data encoding="csv">
@@ -189,13 +192,35 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
+ <objectgroup color="#ff00ff" id="6" name="colisões">
+  <object id="33" name="floor" type="Colisor" x="-0.333333" y="192" width="191.667" height="46.3333"/>
+  <object id="34" name="parede" type="Colisor" x="0.666667" y="-1.33333" width="30" height="1442.67"/>
+  <object id="35" name="floor" type="Colisor" x="81" y="336.5" width="318.5" height="46.5"/>
+  <object id="36" name="floor" type="Colisor" x="224" y="463.5" width="79.5" height="47.5"/>
+  <object id="37" name="floor" type="Colisor" x="0.5" y="464.5" width="159.5" height="46.5"/>
+  <object id="38" name="floor" type="Colisor" x="0.5" y="752.5" width="190.5" height="47"/>
+  <object id="39" name="floor" type="Colisor" x="10.5" y="1216.5" width="261" height="48.5"/>
+  <object id="40" name="floor" type="Colisor" x="10.5" y="1072.5" width="163.5" height="45.5"/>
+  <object id="41" name="floor" type="Colisor" x="337" y="1216.5" width="220.5" height="47"/>
+  <object id="42" name="floor" type="Colisor" x="225.5" y="1056" width="205" height="47"/>
+  <object id="43" name="floor" type="Colisor" x="65" y="881" width="205.5" height="45.5"/>
+  <object id="44" name="floor" type="Colisor" x="368.5" y="911.5" width="192" height="46"/>
+  <object id="45" name="floor" type="Colisor" x="321.5" y="769.5" width="173" height="45"/>
+  <object id="46" name="floor" type="Colisor" x="129.5" y="609" width="318.5" height="45"/>
+  <object id="47" name="floor" type="Colisor" x="352.5" y="464" width="206" height="45"/>
+  <object id="49" name="floor" type="Colisor" x="448" y="336.5" width="112.5" height="45"/>
+  <object id="50" name="floor" type="Colisor" x="305" y="192.5" width="256" height="44.5"/>
+  <object id="51" name="parede" type="Colisor" x="530.5" y="0" width="28" height="1439"/>
+  <object id="52" name="floor" type="Colisor" x="0" y="1394" width="561" height="44"/>
+  <object id="53" name="parede" type="Colisor" x="0" y="-1" width="561" height="42"/>
+ </objectgroup>
  <layer id="1" name="tiles" width="35" height="90">
   <data encoding="csv">
 131,131,131,131,131,131,131,131,131,131,131,131,131,131,131,131,131,131,131,131,131,131,131,131,131,131,131,131,131,131,131,131,131,131,132,
 195,195,195,195,195,195,195,195,195,195,195,195,195,195,195,195,195,195,195,195,195,195,195,195,195,195,195,195,195,195,195,195,195,150,132,
 195,149,144,147,2147484191,463,476,464,471,463,468,464,463,475,476,468,464,466,468,475,463,473,466,463,475,469,464,476,469,543,278,86,150,85,132,
 195,278,387,388,2147484193,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,545,2147484036,2147484035,2147484685,132,
-195,143,451,452,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2147484100,2147484099,2147484687,132,
+195,143,451,452,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,582,0,0,0,0,0,2147484100,2147484099,2147484687,132,
 195,1163,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2147485008,132,
 195,1163,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2147484689,132,
 195,1039,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2147484941,132,
@@ -283,26 +308,4 @@
 89,152,264,269,135,272,88,267,264,265,272,277,143,269,272,90,272,86,135,147,144,199,90,89,152,211,149,199,141,150,85,144,86,131,279
 </data>
  </layer>
- <objectgroup id="6" name="colisões">
-  <object id="33" name="parede" type="Colisor" x="-0.333333" y="192" width="191.667" height="46.3333"/>
-  <object id="34" name="parede" type="Colisor" x="0.666667" y="-1.33333" width="30" height="1442.67"/>
-  <object id="35" name="parede" type="Colisor" x="81" y="336.5" width="318.5" height="46.5"/>
-  <object id="36" name="parede" type="Colisor" x="224" y="463.5" width="79.5" height="47.5"/>
-  <object id="37" name="parede" type="Colisor" x="0.5" y="464.5" width="159.5" height="46.5"/>
-  <object id="38" name="parede" type="Colisor" x="0.5" y="752.5" width="190.5" height="47"/>
-  <object id="39" name="parede" type="Colisor" x="10.5" y="1216.5" width="261" height="48.5"/>
-  <object id="40" name="parede" type="Colisor" x="10.5" y="1072.5" width="163.5" height="45.5"/>
-  <object id="41" name="parede" type="Colisor" x="337" y="1216.5" width="220.5" height="47"/>
-  <object id="42" name="parede" type="Colisor" x="225.5" y="1056" width="205" height="47"/>
-  <object id="43" name="parede" type="Colisor" x="65" y="881" width="205.5" height="45.5"/>
-  <object id="44" name="parede" type="Colisor" x="368.5" y="911.5" width="192" height="46"/>
-  <object id="45" name="parede" type="Colisor" x="321.5" y="769.5" width="173" height="45"/>
-  <object id="46" name="parede" type="Colisor" x="129.5" y="609" width="318.5" height="45"/>
-  <object id="47" name="parede" type="Colisor" x="352.5" y="464" width="206" height="45"/>
-  <object id="49" name="parede" type="Colisor" x="448" y="336.5" width="112.5" height="45"/>
-  <object id="50" name="parede" type="Colisor" x="305" y="192.5" width="256" height="44.5"/>
-  <object id="51" name="parede" type="Colisor" x="530.5" y="0" width="28" height="1439"/>
-  <object id="52" name="parede" type="Colisor" x="0" y="1394" width="561" height="44"/>
-  <object id="53" name="parede" type="Colisor" x="0" y="-1" width="561" height="42"/>
- </objectgroup>
 </map>

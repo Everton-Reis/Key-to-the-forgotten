@@ -9,7 +9,7 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 class Tile(pygame.sprite.Sprite):
     def __init__(self, pos, surface, groups):
         super().__init__(groups)
-        self.image = surface
+        self.image = surface.convert_alpha()
         self.rect = self.image.get_rect(topleft = pos)
 
 
@@ -34,7 +34,7 @@ print(tmx_data.layernames) #printa todas as camadas (debug)
 layer_tile = tmx_data.get_layer_by_name('tiles') #camada principal
 
 for x,y,surf in layer_tile.tiles(): # montando o mapa no jogo
-    surf = surf.convert_alpha()
+    print(surf.get_colorkey())
     x_pos = (x+MARGIN)*TILE_SIZE
     y_pos = (y-correction)*TILE_SIZE
     pos = (x_pos, y_pos)
@@ -43,10 +43,10 @@ for x,y,surf in layer_tile.tiles(): # montando o mapa no jogo
 
 # get background
 paralax_sprite_group = pygame.sprite.Group()
-surf = pygame.image.load('data/fundo.png').convert_alpha()
+surf = pygame.image.load('data/fundo2.png').convert_alpha()
 
 x = MARGIN*TILE_SIZE
-y = 0
+y = -960
 pos = (x, y)
 fundo = Tile(pos, surf,paralax_sprite_group) #posiciona o fundo no lugar certo
 
