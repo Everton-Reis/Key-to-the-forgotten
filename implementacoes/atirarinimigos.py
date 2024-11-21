@@ -4,7 +4,7 @@ import sys
 
 sys.path.append('./atirar')
 sys.path.append('./inimigos')
-sys.path.append('./weapon')
+sys.path.append('./player')
 
 import enemy1_0 as liben
 import followmouse as libat
@@ -45,7 +45,6 @@ class Player:
 
 		if self.weapon_image != None:
 			self.weapon.point_mouse(mouse, screen)
-
 
 	def update(self, enemies):
 		self.speed_y += self.gravity
@@ -117,7 +116,7 @@ class Player:
 
 
 
-image = "./weapon/weapon.png"
+image = "./player/weapon.png"
 player = Player(0,0, image)
 
 enemies = liben.Enemies()

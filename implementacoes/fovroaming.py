@@ -2,8 +2,7 @@ import pygame
 import random
 import sys
 
-sys.path.append("./lineofsight")
-sys.path.append("./roaming")
+sys.path.append("./inimigos")
 
 import fovdetection as fov
 import roaming

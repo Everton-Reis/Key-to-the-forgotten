@@ -81,4 +81,7 @@ class Bullets():
 						for enemy in objects:
 							bullet.take_damage(shooter, enemy)
 
+			else:
+				self.bullets.remove(bullet)
+
 
