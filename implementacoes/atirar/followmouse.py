@@ -4,18 +4,22 @@ import math
 
 #sys.path.append("../inimigos")
 
-import enemy1_0 as liben
+import enemy3_0 as liben
 
 class Bullet:
 
-	def __init__(self, begin, destiny, damage, color):
+	def __init__(self, begin, destiny, damage, color, sprite_path):
 		self.speed = 10
 		self.damage = 5
 		self.shooted = False
 		self.begin = begin
 		self.destiny = destiny
 		self.color = color
-		self.rect = pygame.Rect(self.begin[0], self.begin[1], 10, 10)
+
+		self.image = pygame.image.load(sprite_path)
+		self.image = pygame.transform.scale(self.image, (10,10))
+
+		self.rect = self.image.get_rect(center = (self.begin[0], self.begin[1]))
 
 		dx = self.destiny[0] - self.begin[0]
 		dy = self.destiny[1] - self.begin[1]
@@ -38,7 +42,7 @@ class Bullet:
 				self.shooted = False
 
 	def load(self, screen):
-		pygame.draw.rect(screen, self.color, self.rect)
+		screen.blit(self.image, self.rect)
 
 
 	def move(self):
@@ -52,17 +56,6 @@ class Bullet:
 class Bullets():
 	def __init__(self):
 		self.bullets = list()
-
-	def vanish(self):
-		for bullet in self.bullets:
-			if bullet.rect.x > WIDTH + 100:
-				self.bullets.remove(bullet)
-			elif bullet.rect.x < -100:
-				self.bullets.remove(bullet)
-			elif bullet.rect.y > HEIGHT + 100:
-				self.bullets.remove(bullet)
-			elif bullet.rect.y < -100:
-				self.bullets.remove(bullet)
 
 	def shoot(self, screen, objects, platforms, shooter):
 		if len(self.bullets) == 0:
@@ -81,4 +74,6 @@ class Bullets():
 						for enemy in objects:
 							bullet.take_damage(shooter, enemy)
 
+			else:
+				self.bullets.remove(bullet)
 

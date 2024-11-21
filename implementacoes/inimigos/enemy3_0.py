@@ -3,9 +3,9 @@ import random
 import math
 import sys
 
-#sys.path.append('../atirar')
+sys.path.append('../atirar')
 
-import bullets as libat
+import followmouse as libat
 import player
 
 class BaseEnemy():
@@ -348,7 +348,7 @@ class ShootingEnemy(BaseEnemy):
 
 		bullet = libat.Bullet((self.rect.x, self.rect.y),
 					(player.rect.x, player.rect.y),
-						self.damage, (0,255,100))
+						self.damage, (0,255,100), "../../sprites/1.png")
 		bullet.shooted = True
 		self.bullets.bullets.append(bullet)
 

@@ -1,6 +1,11 @@
 import pygame
-import bullets as libat
-import enemy as liben
+import sys
+
+sys.path.append("../atirar")
+sys.path.append("../inimigos")
+
+import followmouse as libat
+import enemy3_0 as liben
 import weapon as wp
 
 class Player:
@@ -103,7 +108,7 @@ class Player:
 				bullet = libat.Bullet((self.rect.x + (self.width // 2), self.rect.y + (self.height // 2)), 
 									  (mouse.get_pos()[0], mouse.get_pos()[1]),
 									  5,
-									  (10, 10, 10))
+									  (10, 10, 10), '../../sprites/1.png')
 				bullet.shooted = True
 				self.bullets.bullets.append(bullet)
 	
