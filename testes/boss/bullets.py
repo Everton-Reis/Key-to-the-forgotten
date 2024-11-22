@@ -4,22 +4,18 @@ import math
 
 #sys.path.append("../inimigos")
 
-import enemy3_0 as liben
+import enemy as liben
 
 class Bullet:
 
-	def __init__(self, begin, destiny, damage, color, sprite_path):
+	def __init__(self, begin, destiny, damage, color):
 		self.speed = 10
-		self.damage = damage
 		self.shooted = False
+		self.damage = damage
 		self.begin = begin
 		self.destiny = destiny
 		self.color = color
-
-		self.image = pygame.image.load(sprite_path)
-		self.image = pygame.transform.scale(self.image, (10,10))
-
-		self.rect = self.image.get_rect(center = (self.begin[0], self.begin[1]))
+		self.rect = pygame.Rect(self.begin[0], self.begin[1], 10, 10)
 
 		dx = self.destiny[0] - self.begin[0]
 		dy = self.destiny[1] - self.begin[1]
@@ -42,7 +38,7 @@ class Bullet:
 				self.shooted = False
 
 	def load(self, screen):
-		screen.blit(self.image, self.rect)
+		pygame.draw.rect(screen, self.color, self.rect)
 
 
 	def move(self):
@@ -76,4 +72,5 @@ class Bullets():
 
 			else:
 				self.bullets.remove(bullet)
+
 

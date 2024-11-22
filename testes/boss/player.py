@@ -1,13 +1,6 @@
 import pygame
-import math
-import sys
-
-sys.path.append("../atirar")
-sys.path.append("../inimigos")
-
-import followmouse as libat
-import enemy3_0 as liben
-import weapon as wp
+import bullets as libat
+import enemy as liben
 
 class Player:
 
@@ -38,14 +31,13 @@ class Player:
 			self.weapon_image = weapon_image
 			self.weapon.create_weapon()
 		else:
-			self.weapon = None
 			self.weapon_image = None
 	
 	def draw(self, screen, mouse = None):
 		pygame.draw.rect(screen, self.color, self.rect)
 
 		if self.weapon_image and mouse:
-			self.weapon.point_mouse(mouse, screen)
+			self.weapon_image.point_mouse(mouse, screen)
 
 	def collide(self, plataforms, enemies):
 
@@ -62,7 +54,7 @@ class Player:
 						self.rect.top = plataform.bottom
 						self.speed_y = 0
 
-		if enemies != None and len(enemies.enemies) > 0:
+		if enemies and len(enemies.enemies) > 0:
 			for enemy in enemies.enemies:
 				if self.rect.colliderect(enemy.rect):
 					if self.speed_y > 0:
@@ -83,7 +75,7 @@ class Player:
 					if self.dx < 0:
 						self.rect.left = plataform.right
 
-		if enemies != None and len(enemies.enemies) > 0:
+		if enemies and len(enemies.enemies) > 0:
 			for enemy in enemies.enemies:
 				if self.rect.colliderect(enemy.rect):
 					if self.dx > 0:
@@ -107,17 +99,10 @@ class Player:
 		
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if event.button == 1:
-				if self.weapon:
-					angle = self.weapon.get_angle_to_mouse(mouse.get_pos())
-					distance = 50
-					x = self.weapon.position[0] + distance * math.cos(math.radians(-(angle + 90)))
-					y = self.weapon.position[1] + distance * math.sin(math.radians(-(angle + 90)))
-
-
 				bullet = libat.Bullet((self.rect.x + (self.width // 2), self.rect.y + (self.height // 2)), 
 									  (mouse.get_pos()[0], mouse.get_pos()[1]),
 									  5,
-									  (10, 10, 10), '../../sprites/1.png')
+									  (10, 10, 10))
 				bullet.shooted = True
 				self.bullets.bullets.append(bullet)
 	

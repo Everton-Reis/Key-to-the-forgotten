@@ -1,69 +1,85 @@
 # mapa.py
-import pygame
+import pygame, sys
+from pytmx.util_pygame import load_pygame
+from Setings import *
+
+pygame.init()
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Configurações do bloco e do mapa
-BLOCK_SIZE = 50
 BLOCK_SPEED = 1
+BLOCK_SIZE = 50
 BLUE = (0, 0, 255)
 
-map_layout = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-]
+class Tile(pygame.sprite.Sprite):
+    def __init__(self, pos, surface, groups):
+        super().__init__(groups)
+        self.image = surface.convert()
+        self.rect = self.image.get_rect(topleft = pos)
 
-class Map:
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+        
+class Map():
     def __init__(self):
 
+        self.tiles_sprite_group = pygame.sprite.Group()
+        self.background1_sprite_group = pygame.sprite.Group()
 
-        self.layout = map_layout
-        self.block_size = BLOCK_SIZE
-        self.color = BLUE
-        self.block_speed = BLOCK_SPEED
-        self.standing_plataforms = list()
-    
-    def draw_plataforms(self, screen, plataforms, size_height, camera_offset):
-        for plataform in plataforms:
-            pygame.draw.rect(screen, BLUE, plataform)    
 
-            if plataform.y > size_height + 400:
-                plataforms.remove(plataform)
+        # Map
+        self.tmx_data = load_pygame('data/tmx/mapa_fase1.tmx') # carrega o arquivo com o mapa
+        self.correction = 83 - ROWS # Correção da Altura para encaixar na Tela (Temporário)
+
+        # get tiles
+        self.layer_tile = self.tmx_data.get_layer_by_name('tiles') #camada principal
+        for x,y,surf in self.layer_tile.tiles(): # montando o mapa no jogo
+            surf = surf.convert_alpha()
+            x_pos = (x+MARGIN)*TILE_SIZE
+            y_pos = (y-self.correction)*TILE_SIZE
+            pos = (x_pos, y_pos)
+            self.tiles_sprite_group.add(Tile(pos,surf, self.tiles_sprite_group))
+
+        # get background
+        self.paralax_sprite_group = pygame.sprite.Group()
+        surf = pygame.image.load('data/fundo2.png').convert_alpha()
+        x = MARGIN*TILE_SIZE
+        y = -240 # Hardcode temporário
+        pos = (x, y)
+        self.fundo = Tile(pos, surf,self.paralax_sprite_group) #posiciona o fundo no lugar certo
+
+
+    def draw_plataforms(self,screen, plataforms, height, camera_offset): #sugestão draw_scenario
+        # """Desenha o mapa de plataformas na tela."""
+        self.tiles_sprite_group.draw(screen)
+
+        # Debug: vizualização dos colisores
+        # for plataform in plataforms:
+        #     pygame.draw.rect(screen, BLUE, plataform)
+        
+
+    def draw_background(self, screen):
+        self.fundo.draw(screen)
 
     def give_plataforms(self):
+        # """Retorna uma lista de retângulos representando as plataformas."""
+        plataformas = []
+        standing_plataforms = []
+        object_layer = self.tmx_data.get_layer_by_name('colisões')
+        for obj in object_layer:
+            rect = pygame.Rect(obj.x + MARGIN*TILE_SIZE ,obj.y - self.correction*TILE_SIZE,obj.width, obj.height)
 
-        plataforms = []
-        for line_index, line in enumerate(self.layout):
-            for column_index, block in enumerate(line):
-                if block == 1:
-                    plataform_rect = pygame.Rect(
-                        column_index * self.block_size,
-                        line_index * self.block_size,
-                        self.block_size,
-                        self.block_size
-                    )
-                    plataforms.append(plataform_rect)
-                    if line_index > 0 and column_index > 2 and \
-                    column_index < len(self.layout[0]) - 2 and \
-                    self.layout[line_index - 1][column_index] == 0:
+            if obj.name == 'floor':
+                standing_plataforms.append(rect)
 
-                        self.standing_plataforms.append(plataform_rect)
+            plataformas.append(rect)
 
+        return plataformas, standing_plataforms
 
-        return plataforms
-
-    def move_map(self, plataforms):
-        for plataform in plataforms:
-            plataform.y += self.block_speed
-
+    def move_map(self, plataformas):
+        for plataforma in plataformas:
+            plataforma.y += BLOCK_SPEED
+        for tile in self.tiles_sprite_group:
+            tile.rect.y += BLOCK_SPEED
+        self.fundo.rect.y += BLOCK_SPEED * 0.8

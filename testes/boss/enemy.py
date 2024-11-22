@@ -3,9 +3,9 @@ import random
 import math
 import sys
 
-sys.path.append('../atirar')
+#sys.path.append('../atirar')
 
-import followmouse as libat
+import bullets as libat
 import player
 
 class BaseEnemy():
@@ -95,6 +95,7 @@ class BaseEnemy():
 					return False
 
 		return True
+
 
 class MovingEnemy(BaseEnemy):
 	def __init__(self, x, y, color, w, h):
@@ -242,7 +243,7 @@ class MovingEnemy(BaseEnemy):
 class WeakMovingEnemy(MovingEnemy):
 
 	def __init__(self, x,y):
-		super().__init__(x, y, (100,100,100), 25, 50)
+		super().__init__(x, y, (100,100,100), 25, 100)
 		self.health = 3
 		self.damage = 5
 		self.speed = 2
@@ -252,8 +253,7 @@ class WeakMovingEnemy(MovingEnemy):
 class StrongMovingEnemy(MovingEnemy):
 
 	def __init__(self, x,y):
-
-		super().__init__(x,y, (100,100, 200), 50, 50)
+		super().__init__(x,y, (100,100, 200), 50, 100)
 		self.health = 20
 		self.damage = 5
 		self.speed = 1
@@ -348,29 +348,51 @@ class ShootingEnemy(BaseEnemy):
 
 		bullet = libat.Bullet((self.rect.x, self.rect.y),
 					(player.rect.x, player.rect.y),
-						self.damage, (0,255,100), "../../sprites/1.png")
+						self.damage, (0,255,100))
 		bullet.shooted = True
 		self.bullets.bullets.append(bullet)
 
-class Key:
-	def __init__(self, image_path, position=(0, 0)):
-		self.image = pygame.image.load(image_path).convert_alpha()
-		self.rect = self.image.get_rect(center=position)
-		self.visible = False  # A chave será visível somente quando ativada
+class Boss(BaseEnemy):
+	def __init__(self, x, y, color, w, h):
+		super().__init__(x,y, color, w, h)
+		self.health = 1000
+		self.bullets = libat.Bullets()
+		self.damage = 100
+		self.max_offset = 1
 
-	def activate(self, position):
-		self.rect.center = position
-		self.visible = True
+	def move(self, block_speed, time):
+		self.rect.y += self.max_offset*math.sin(time.get_ticks() / 500)
 
-	def load(self, screen):
-		if self.visible:
-			screen.blit(self.image, self.rect)
+	def chase(self, player):
+		pass
 
-	def check_collision(self, player):
-		if self.visible and self.rect.colliderect(player.rect):
-			self.visible = False
-			return True
-		return False
+	def roam(self):
+		pass
+
+	def attack(self, player, screen):
+		#sortear o ataque
+		#possiveis probs:
+		# ataque 1 - 80%
+		# ataque 2 - 10%
+		# ataque 3 - 10%
+		self.attack1(player, screen)
+
+
+	def attack1(self, player, screen):
+		if self.alive == False:
+			return
+
+		bullet = libat.Bullet((self.rect.center[0], self.rect.center[1]),
+			(player.rect.center[0], player.rect.center[1]),
+				self.damage, (0,255,100))
+		bullet.shooted = True
+		self.bullets.bullets.append(bullet)
+
+	def attack2(self):
+		pass
+
+	def attack3(self):
+		pass
 
 
 class Enemies():
@@ -379,7 +401,6 @@ class Enemies():
 		self.mov_enemies = list()
 		self.shoot_enemies = list()
 		self.enemies = list()
-		self.key = Key("../../sprites/grass.png")
 
 
 	def find_random_positions(self, plataforms, number):
@@ -388,7 +409,7 @@ class Enemies():
 		positions = list()
 
 		for choice in choices:
-			x = random.randint(choice.left, choice.right - 50)
+			x = random.randint(choice.left, choice.right - 10)
 			y = choice.top - 10
 
 			positions.append((x,y))
@@ -424,8 +445,6 @@ class Enemies():
 
 		for enemy in self.enemies:
 			enemy.load(screen)
-
-		self.key.load(screen)
 
 
 	def mov_attack(self, player, plataforms):
@@ -468,20 +487,12 @@ class Enemies():
 		if len(self.enemies) == 0:
 			return
 
-		last_enemy = None
+		for enemy in self.enemies:
+			if enemy.alive == False:
 
-		for enemy in self.enemies[:]:
-			if not enemy.alive:
-				last_enemy = enemy
 				if isinstance(enemy, WeakMovingEnemy) or isinstance(enemy, StrongMovingEnemy):
 					self.mov_enemies.remove(enemy)
 
 				if isinstance(enemy, ShootingEnemy) and len(enemy.bullets.bullets) == 0:
 					self.shoot_enemies.remove(enemy)
-
-		self.enemies = self.mov_enemies + self.shoot_enemies
-		if not self.enemies:
-			if not self.key.visible:
-				if last_enemy:
-					self.key.activate(last_enemy.rect.center)
 
