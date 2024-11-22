@@ -5,7 +5,7 @@ import sys
 sys.path.append("../atirar")
 sys.path.append("../inimigos")
 
-import followmouse as libat
+import bullets2_0 as libat
 import enemy3_0 as liben
 import weapon as wp
 

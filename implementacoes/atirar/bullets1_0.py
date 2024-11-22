@@ -2,6 +2,8 @@ import pygame
 import sys
 import math
 
+#alterar os caminhos de acordo com o contexto
+
 import enemy as liben
 
 class Bullet:

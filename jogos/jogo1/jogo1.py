@@ -7,9 +7,9 @@ sys.path.append("../../implementacoes/player")
 sys.path.append("../../implementacoes/lifebar")
 
 import mapa
-import player
+import player1_0 as player
 import enemy3_0 as liben
-import lifebar as Life
+import lifebar1_0 as Life
 
 from mapa import BLOCK_SPEED
 

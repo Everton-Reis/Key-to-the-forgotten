@@ -1,6 +1,11 @@
 import pygame
+import sys
+
+#alterar caminhos dependendo do contexto
+
 import bullets as libat
 import enemy as liben
+
 
 class Player:
 

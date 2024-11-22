@@ -202,7 +202,7 @@ class MovingEnemy(BaseEnemy):
 		self.dy = 0
 
 
-	def move(self):
+	def move(self, time = None):
 		if self.tomove == 0:
 			return
 
@@ -342,8 +342,11 @@ class ShootingEnemy(BaseEnemy):
 			self.dx = 0
 
 
-	def attack(self, player, screen):
-		if self.alive == False or self.roaming == True or self.seeingplayer == False:
+	def attack(self, player):
+		if self.alive == False or \
+		 self.roaming == True or \
+		 self.seeingplayer == False or \
+		 player.alive == False:
 			return
 
 		bullet = libat.Bullet((self.rect.x, self.rect.y),
@@ -352,47 +355,119 @@ class ShootingEnemy(BaseEnemy):
 		bullet.shooted = True
 		self.bullets.bullets.append(bullet)
 
+class BossShootingEnemy(ShootingEnemy):
+	def __init__(self, x,y):
+		super().__init__(x,y)
+		self.max_offset = 2
+		self.seeingplayer = True
+		self.roaming = False
+
+	def move(self, time):
+		self.rect.y += self.max_offset*math.sin(time.get_ticks() / 500)
+
 class Boss(BaseEnemy):
 	def __init__(self, x, y, color, w, h):
 		super().__init__(x,y, color, w, h)
 		self.health = 1000
+		self.MAX_HEALTH = 1000
 		self.bullets = libat.Bullets()
-		self.damage = 100
-		self.max_offset = 1
+		self.damage = 200
+		self.max_offset = 2
+		self.attack2_config = 0
 
-	def move(self, block_speed, time):
+		self.attack2_times = random.randint(5,10)
+		self.attack2_count = 0
+		self.attack2_isrunning = False
+
+		self.attack3_isrunning = False
+
+		self.enemies = list()
+
+	def move(self, time):
 		self.rect.y += self.max_offset*math.sin(time.get_ticks() / 500)
 
-	def chase(self, player):
-		pass
 
-	def roam(self):
-		pass
-
-	def attack(self, player, screen):
-		#sortear o ataque
-		#possiveis probs:
-		# ataque 1 - 80%
-		# ataque 2 - 10%
-		# ataque 3 - 10%
-		self.attack1(player, screen)
-
-
-	def attack1(self, player, screen):
-		if self.alive == False:
+	def attack(self, player):
+		if not player.alive or not self.alive:
 			return
 
+		if self.attack2_isrunning:
+			self.attack2()
+			return
+
+		prob = random.randint(0,10)
+
+		if 0 <= prob <= 8:
+			self.attack1(player)
+
+		elif prob == 9:
+			self.attack2_isrunning = True
+			self.attack2()
+		else:
+			if self.attack3_isrunning:
+				if len(self.enemies) > 0:
+					return
+				else:
+					self.attack3_isrunning = False
+
+			self.attack3()
+
+
+
+	def attack1(self, player):
 		bullet = libat.Bullet((self.rect.center[0], self.rect.center[1]),
 			(player.rect.center[0], player.rect.center[1]),
-				self.damage, (0,255,100))
+				self.damage, (0,50,50))
 		bullet.shooted = True
 		self.bullets.bullets.append(bullet)
 
+
 	def attack2(self):
-		pass
+		#ataque circular
+		number = 10 # != 0
+		radius = 50
+
+		config = self.attack2_config % 2 * math.pi / 2
+		for i in range(number):
+			angle = (2 * math.pi / number) * i
+			destiny_x = self.rect.center[0] + radius * math.cos(angle + config)
+			destiny_y = self.rect.center[1] + radius * math.sin(angle + config)
+
+			bullet = libat.Bullet(self.rect.center,
+									(destiny_x, destiny_y),
+									self.damage, (0,50,50))
+			bullet.shooted = True
+			self.bullets.bullets.append(bullet)
+
+		self.attack2_config += 1
+		self.attack2_count += 1
+
+		if self.attack2_count == self.attack2_times:
+			self.attack2_isrunning = False
+
+			self.attack2_times = random.randint(5,10)
+
 
 	def attack3(self):
-		pass
+		number = random.randint(3,6)
+		radius = 150
+
+		for i in range(number):
+			angle = (2 * math.pi / number) * i
+			x = self.rect.center[0] + radius * math.cos(angle + math.pi/2) - self.rect.width // 4
+			y = self.rect.center[1] + radius * math.sin(angle + math.pi/2) - self.rect.height // 4
+
+			enemy = BossShootingEnemy(x, y)
+			self.enemies.append(enemy)
+
+		self.attack3_isrunning = True
+
+	def move_boss(self, time):
+		self.move(time)
+
+		if len(self.enemies) > 0:
+			for enemy in self.boss_enemies.enemies:
+				enemy.move(time)
 
 
 class Enemies():
@@ -401,6 +476,7 @@ class Enemies():
 		self.mov_enemies = list()
 		self.shoot_enemies = list()
 		self.enemies = list()
+		self.boss = None
 
 
 	def find_random_positions(self, plataforms, number):
@@ -433,11 +509,19 @@ class Enemies():
 				self.shoot_enemies.append(choice)
 
 
-	def update(self, plataforms, player, enemies):
+	def update(self, plataforms, player, enemies, time):
 		self.enemies = self.mov_enemies + self.shoot_enemies
 
 		for enemy in self.enemies:
 			enemy.update(plataforms, player, enemies)
+
+		if self.boss:
+			self.boss.move(time)
+
+			if len(self.boss.enemies) > 0:
+				for enemy in self.boss.enemies:
+					enemy.move(time)
+
 
 
 	def load(self, screen):
@@ -445,6 +529,13 @@ class Enemies():
 
 		for enemy in self.enemies:
 			enemy.load(screen)
+
+		if self.boss:
+			self.boss.load(screen)
+
+			if len(self.boss.enemies) > 0:
+				for enemy in self.boss.enemies:
+					enemy.load(screen)
 
 
 	def mov_attack(self, player, plataforms):
@@ -458,7 +549,7 @@ class Enemies():
 			else:
 				enemy.chase(player)
 
-	def shoot_attack(self, player, plataforms, screen):
+	def shoot_attack(self, player, plataforms):
 		for enemy in self.shoot_enemies:
 			enemy.seeingplayer = enemy.can_see_player(
 									player.rect.center,
@@ -468,31 +559,48 @@ class Enemies():
 				enemy.roam()
 			else:
 				enemy.chase(player)
-				enemy.attack(player, screen)
+				enemy.attack(player)
+
+		if self.boss:
+			self.boss.attack(player)
+
+			if len(self.boss.enemies) > 0:
+				for enemy in self.boss.enemies:
+					enemy.attack(player)
+
 
 
 	def shoot_bullets(self, player, plataforms, screen):
 		for enemy in self.shoot_enemies:
 			enemy.bullets.shoot(screen, player, plataforms, enemy)
 
+		if self.boss:
+			self.boss.bullets.shoot(screen, player, plataforms, self.boss)
 
-	def move(self, player):
-		self.enemies = self.mov_enemies + self.shoot_enemies
-		for enemy in self.enemies:
-			enemy.move(player)
+			if len(self.boss.enemies) > 0:
+				for enemy in self.boss.enemies:
+					enemy.bullets.shoot(screen, player, plataforms, enemy)
 
 
 	def check_die(self):
 		self.enemies = self.mov_enemies + self.shoot_enemies
-		if len(self.enemies) == 0:
-			return
 
-		for enemy in self.enemies:
-			if enemy.alive == False:
+		if len(self.enemies) > 0:
+			for enemy in self.enemies:
+				if enemy.alive == False:
 
-				if isinstance(enemy, WeakMovingEnemy) or isinstance(enemy, StrongMovingEnemy):
-					self.mov_enemies.remove(enemy)
+					if isinstance(enemy, WeakMovingEnemy) or isinstance(enemy, StrongMovingEnemy):
+						self.mov_enemies.remove(enemy)
 
-				if isinstance(enemy, ShootingEnemy) and len(enemy.bullets.bullets) == 0:
-					self.shoot_enemies.remove(enemy)
+					if isinstance(enemy, ShootingEnemy) and len(enemy.bullets.bullets) == 0:
+						self.shoot_enemies.remove(enemy)
+
+
+		if self.boss:
+			if len(self.boss.enemies) > 0:
+				for enemy in self.boss.enemies:
+					if enemy.alive == False and len(enemy.bullets.bullets) == 0:
+						self.boss.enemies.remove(enemy)
+
+
 

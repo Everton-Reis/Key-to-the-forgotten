@@ -2,7 +2,8 @@ import pygame
 import sys
 import math
 
-#sys.path.append("../inimigos")
+#alterar os caminhos de acordo com o contexto
+sys.path.append("../inimigos")
 
 import enemy3_0 as liben
 
