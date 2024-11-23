@@ -11,12 +11,13 @@ import player
 class BaseEnemy():
 
 	def __init__(self, x, y, color = None, w = 0, h = 0):
-		self.rect = pygame.Rect(x,y, w, h)
-		self.health = 0
+		self.rect = pygame.Rect(x - w // 2,y - h // 2, w, h)
+		self.health = 10
 		self.speed = 0
 		self.damage = 0
 		self.color = color
 		self.alive = True
+		self.killed_by_player = False
 		self.xp = 0
 
 		self.last_direction_player = 0
@@ -65,6 +66,10 @@ class BaseEnemy():
 
 	def die(self):
 		if self.health <= 0:
+			self.killed_by_player = True
+			self.alive = False
+
+		if self.rect.y > 1000:
 			self.alive = False
 
 
@@ -197,6 +202,8 @@ class MovingEnemy(BaseEnemy):
 
 		self.collide(plataforms, player, enemies)
 
+		self.die()
+
 		self.dx = 0
 		self.dy = 0
 
@@ -313,8 +320,10 @@ class ShootingEnemy(BaseEnemy):
 
 		self.collide(plataforms, player, enemies)
 
+		self.die()
 		self.dx = 0
 		self.dy = 0
+
 
 	def chase(self, player):
 		if self.seeingplayer:
@@ -368,6 +377,7 @@ class BossShootingEnemy(ShootingEnemy):
 
 	def move(self, time):
 		self.rect.y += self.max_offset*math.sin(time.get_ticks() / 500)
+		self.die()
 
 class Boss(BaseEnemy):
 	def __init__(self, x, y, color, w, h):
@@ -390,6 +400,7 @@ class Boss(BaseEnemy):
 
 	def move(self, time):
 		self.rect.y += self.max_offset*math.sin(time.get_ticks() / 500)
+		self.die()
 
 
 	def attack(self, player):
@@ -490,8 +501,11 @@ class Enemies():
 
 		positions = list()
 
+		x_fix = 20
+		y_fix = 10
+
 		for choice in choices:
-			x = random.randint(choice.left, choice.right) - 20
+			x = choice.center[0]
 			y = choice.top - 10
 
 			positions.append((x,y))
@@ -594,9 +608,11 @@ class Enemies():
 		if len(self.enemies) > 0:
 			for enemy in self.enemies:
 				if enemy.alive == False:
+					
+					if enemy.killed_by_player:
+						player.total_exp += enemy.xp
+						enemy.xp = 0
 
-					player.total_exp += enemy.xp
-					enemy.xp = 0
 					if isinstance(enemy, WeakMovingEnemy) or isinstance(enemy, StrongMovingEnemy):
 						self.mov_enemies.remove(enemy)
 
@@ -611,7 +627,9 @@ class Enemies():
 			if len(self.boss.enemies) > 0:
 				for enemy in self.boss.enemies:
 					if enemy.alive == False and len(enemy.bullets.bullets) == 0:
-						player.total_exp += self.enemy.xp
+						if enemy.killed_by_player:
+							player.total_exp += self.enemy.xp
+
 						self.boss.enemies.remove(enemy)
 
 

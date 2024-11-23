@@ -156,20 +156,32 @@ class Buffs():
 		return buff_rects
 
 	def choose_buff(self, player, screen, card_size):
-		buffs_rects = self.display_buffs(screen, (200,500))
-		while True:
-			for event in pygame.event.get():
-				if event.type == pygame.QUIT:
-					return (False, False)
+		total = player.level - player.ant_level
 
-				if event.type == pygame.MOUSEBUTTONDOWN:
-					if event.button == 3:
-						return (True, False)
+		while total > 0:
+			self.create_buffs()
+			chose = False
+			buff_rects = self.display_buffs(screen, card_size)
+			while True:
+				for event in pygame.event.get():
+					if event.type == pygame.QUIT:
+						return (False, False)
 
-					if event.button == 1:
-						mouse_pos = event.pos
+					if event.type == pygame.MOUSEBUTTONDOWN:
+						if event.button == 1:
+							mouse_pos = event.pos
 
-						for buff, rect, in buffs_rects:
-							if rect.collidepoint(mouse_pos):
-								buff.apply(player)
-								return (True, False)
+							for buff, rect, in buff_rects:
+								if rect.collidepoint(mouse_pos):
+									buff.apply(player)
+
+									total -= 1
+									chose = True
+									break
+					if chose:
+						break
+				if chose:
+					break
+									
+		return (True, False)
+

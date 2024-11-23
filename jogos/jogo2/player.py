@@ -105,6 +105,9 @@ class Player:
 
 
 	def draw(self, screen, mouse = None):
+		if not self.alive:
+			return
+
 		pygame.draw.rect(screen, self.color, self.rect)
 		self.draw_status(screen)
 
@@ -165,8 +168,13 @@ class Player:
 						self.rect.left = enemy.rect.right
 
 	def update(self, plataforms, enemies):
+		if not self.alive:
+			self.health = 0
+			return
+
 		self.speed_y += self.gravity_y
 		self.rect.y += self.speed_y
+		self.die()
 
 		self.collide(plataforms, enemies)
 
@@ -198,6 +206,9 @@ class Player:
 
 
 	def on_event(self, event: pygame.event.Event, mouse):
+		if not self.alive:
+			return
+
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_SPACE:
 				self._jump()
@@ -231,6 +242,9 @@ class Player:
 		self.jump_count += 1
 
 	def on_key_pressed(self, key_map):
+		if not self.alive:
+			return
+
 		if key_map[pygame.K_d]:
 			self.dx = self.speed_x
 		elif key_map[pygame.K_a]:
@@ -247,4 +261,7 @@ class Player:
 
 	def die(self):
 		if self.health <= 0:
+			self.alive = False
+
+		if self.rect.y > 1000:
 			self.alive = False
