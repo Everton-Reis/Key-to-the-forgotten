@@ -1,4 +1,9 @@
 import pygame
+import sys
+
+sys.path.append("../../implementacoes/buffs")
+
+import buffs
 
 from mapa import Map
 
@@ -24,7 +29,7 @@ class GameManager:
 
 		# Objetos
 		self.player = player.Player(self.width // 2, self.height // 2, 25, 25)
-		self.lifebar_player = Life.LifeBar(self.player, "player", self.screen)
+		self.lifebar_player = Life.LifeBar(self.player, self.screen)
 
 		self.plataforms = mapa1.give_plataforms()
 		self.standing_plataforms = mapa1.standing_plataforms
@@ -38,8 +43,10 @@ class GameManager:
 		self.camera_offset = [0, 0]
 
 		self.enemies = liben.Enemies()
-		self.enemies.boss = liben.Boss(self.width // 2 - 50, self.height // 2 - 100, (100,100,100), 100, 100)
-		self.lifebar_boss = Life.LifeBar(self.enemies.boss, "boss", self.screen)
+
+		self.buffs = buffs.Buffs()
+
+		self.paused = False
 
 	def run(self):
 		# Inicializa o jogo
@@ -51,21 +58,14 @@ class GameManager:
 
 		while self.is_running:      
 			delta = self.clock.tick(60)
-			time_map += delta
-			time_shoot_enemy += delta
 
-			if time_map >= self.camera_speed:
-				mapa1.move_map(self.plataforms)
-				time_map = 0
+			if self.paused:
+				self.is_running, self.paused = self.buffs.choose_buff(self.player, self.screen, (200,500))
 
-			if time_shoot_enemy >= self.shoot_speed:
-				self.enemies.shoot_attack(self.player, self.plataforms)
-				time_shoot_enemy = 0
 
 			self.event()
 			self.update()
 			self.lifebar_player.update()
-			self.lifebar_boss.update()
 			self.draw()
 		pygame.quit()
 
@@ -79,7 +79,15 @@ class GameManager:
 		for event in events:
 			if event.type == pygame.QUIT:
 				self.is_running = False
+
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				if event.button == 3:
+					self.paused = True
+					self.buffs.create_buffs()
+
 			self.player.on_event(event, pygame.mouse)
+
+
 
 		# Chaves pressionadas no momento
 		key_map = pygame.key.get_pressed()
@@ -87,28 +95,21 @@ class GameManager:
 
 	def update(self):
 		self.player.update(self.plataforms, None)
-		self.enemies.update(self.plataforms, self.player, self.enemies, pygame.time)
 		self.update_camera()
 
 	def draw(self):
 		# Renderizaçao
 		self.screen.fill((255, 255, 255))
 		self.player.draw(self.screen)
-		enemies = self.enemies.enemies + [self.enemies.boss] + self.enemies.boss.enemies
 
-		self.player.bullets.shoot(self.screen, enemies, self.plataforms, self.player)
-		self.enemies.load(self.screen)
-		self.enemies.shoot_bullets(self.player, self.plataforms, self.screen)
-		self.enemies.check_die()
+		self.player.bullets.shoot(self.screen, self.enemies.enemies, self.plataforms, self.player)
 
 		mapa1.draw_plataforms(self.screen, self.plataforms, self.height, self.camera_offset)
 
-		coords_text = f"Posição do jogador: ({self.player.rect.x}, {self.player.rect.y})"
-		coords_surface = self.font.render(coords_text, True, (255, 255, 0))  # Texto na cor preta
-		self.screen.blit(coords_surface, (10, 10))  # Desenha no canto superior esquerdo da tela
+		font_status = pygame.font.Font(None, 15)
+
 
 		self.lifebar_player.life_bar_health()
-		self.lifebar_boss.life_bar_health()
 
 		pygame.display.flip()
 
