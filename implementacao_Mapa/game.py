@@ -1,8 +1,8 @@
 import pygame
 
-from mapa import Map
-import followmouse as libat
-import enemy as liben
+from scripts.mapa import Map
+import scripts.followmouse as libat
+import scripts.enemy as liben
 
 Mapa = Map()
 
