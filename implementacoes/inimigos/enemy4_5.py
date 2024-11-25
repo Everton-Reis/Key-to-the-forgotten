@@ -3,8 +3,6 @@ import random
 import math
 import sys
 
-sys.path.append("../")
-
 from gamesettings import *
 
 #sys.path.append('../atirar')

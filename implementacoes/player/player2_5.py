@@ -3,10 +3,6 @@ import bullets as libat
 import enemy as liben
 import math
 import weapon as wp
-import sys
-
-sys.path.append("../")
-
 from gamesettings import *
 
 class Player:

@@ -2,7 +2,7 @@ import pygame
 import random
 import sys
 
-sys.path.append("../")
+sys.path.append("../../jogos")
 
 from gamesettings import *
 
