@@ -36,7 +36,7 @@ class GameManager:
 		self.font = pygame.font.Font(None, 36) # tamanho 36
 
 		# Objetos
-		self.player = player.Player(PLAYER_SPAWN[0], PLAYER_SPAWN[1], PLAYER_SIZE[0], PLAYER_SIZE[1], PLAYER_WEAPON_SPRITE)
+		self.player = player.Player(PLAYER_SPAWN[0], PLAYER_SPAWN[1])
 		self.lifebar_player = Life.LifeBar(self.player, "player", self.screen)
 		self.expbar_player = Life.ExpBar(self.player, self.screen)
 
@@ -70,10 +70,8 @@ class GameManager:
 		time_shoot_enemy = 0
 		time_enemy_spawn = 0
 
-
-
 		while self.is_running:      
-			delta = self.clock.tick(200)
+			delta = 50
 			time_shoot_enemy += delta
 			time_map += delta
 			time_enemy_spawn += delta
@@ -81,28 +79,29 @@ class GameManager:
 			if self.buff_paused:
 				self.is_running, self.buff_paused = self.buffs.choose_buff(self.player, self.screen, (200,500))
 
+			if time_map >= self.camera_speed:
+				self.extend = mapa1.move_map(self.plataforms)
+				time_map = 0
+
 			if time_enemy_spawn >= self.spawn_speed and not self.enemies.boss:
 				self.enemies.create_random_enemies(self.standing_plataforms, mapa1.floor)
 				time_enemy_spawn = 0
 
 			if time_shoot_enemy >= self.shoot_speed:
-				self.enemies.shoot_attack(self.player, self.plataforms)
+				self.enemies.shoot_attack(self.player, self.plataforms, self.screen)
 				time_shoot_enemy = 0
 
-			if time_map >= self.camera_speed:
-				self.extend = mapa1.move_map(self.plataforms)
-				time_map = 0
 
 			self.event()
-			self.update()
 			self.lifebar_player.update()
 			self.expbar_player.update()
+			self.draw(delta)
+			self.update()
 
 			if self.lifebar_boss:
 				self.lifebar_boss.update()
 				time_enemy_spawn = 0
 
-			self.draw()
 		pygame.quit()
 
 	def event(self):
@@ -129,7 +128,7 @@ class GameManager:
 
 	def update(self):
 		self.player.update(self.plataforms, self.enemies)
-		self.enemies.update(self.plataforms, self.player, self.enemies, pygame.time)
+		self.enemies.update(self.plataforms, self.player, self.enemies, pygame.time, self.screen)
 
 		if not self.enemies.boss:
 			self.lifebar_boss = None
@@ -144,16 +143,16 @@ class GameManager:
 			self.keys_collected += 1
 
 
-	def draw(self):
+	def draw(self, delta):
 		# Renderizaçao
 		self.screen.fill((255, 255, 255))
-		self.player.draw(self.screen, pygame.mouse.get_pos())
+		self.player.draw(self.screen, delta, pygame.mouse.get_pos())
 
 		self.player.bullets.shoot(self.screen, self.enemies, self.plataforms, self.player)
 
 		self.enemies.load(self.screen)
 		self.enemies.shoot_bullets(self.player, self.plataforms, self.screen)
-		self.enemies.mov_attack(self.player, self.plataforms)
+		self.enemies.mov_attack(self.player, self.plataforms, self.screen)
 		self.enemies.check_die(self.player)
 
 		mapa1.draw_plataforms(self.screen, self.plataforms, self.height, self.camera_offset)
@@ -167,8 +166,11 @@ class GameManager:
 		keys_surface = self.font.render(keys_text, True, (0, 0, 0))
 		self.screen.blit(keys_surface, (self.width - 150, 10))
 
-		self.lifebar_player.life_bar_health()
-		self.expbar_player.exp_bar()
+		if self.lifebar_player:
+			self.lifebar_player.life_bar_health()
+
+		if self.expbar_player:
+			self.expbar_player.exp_bar()
 
 		if self.lifebar_boss:
 			self.lifebar_boss.life_bar_health()

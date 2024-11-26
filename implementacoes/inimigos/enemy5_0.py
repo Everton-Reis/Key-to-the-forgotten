@@ -109,6 +109,7 @@ class BaseEnemy():
 
 		return True
 
+
 class MovingEnemy(BaseEnemy):
 	def __init__(self, x, y, color, w, h):
 		super().__init__(x,y, color, w, h)

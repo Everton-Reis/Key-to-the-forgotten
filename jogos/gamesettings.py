@@ -3,6 +3,7 @@
 
 
 #screen and map settings
+DELTA_GAME = 50
 SCREEN_SIZE = (1200, 1000)
 SCREEN_FULLSCREEN = False
 ENDLESS_MODE = False
@@ -10,11 +11,11 @@ MAX_FLOOR = 10
 
 BOSS_FLOOR = 8
 BLOCK_SPEED = 1
-BLOCK_SIZE = 50
+BLOCK_SIZE = 60
 
-CAMERA_SPEED = 10
-SHOOT_SPEED = 800
-SPAWN_SPEED = 5000
+CAMERA_SPEED = 0
+SHOOT_SPEED = 2000
+SPAWN_SPEED = 15000
 
 #settings
 PLAYER_SPAWN = (SCREEN_SIZE[0] // 2 + 200, SCREEN_SIZE[1] - 300)
@@ -29,7 +30,7 @@ PLAYER_INITIAL_DASH = 0
 PLAYER_INITIAL_SHOOT = 0
 PLAYER_INITIAL_LS = 0
 
-PLAYER_WEAPON_SIZE = (50, 50)
+PLAYER_WEAPON_SIZE = (100, 80)
 
 
 #enemies settings
@@ -97,14 +98,24 @@ LS_PROB = 10
 
 #sprites
 PLAYER_WEAPON_SPRITE = "../../sprites/weapon.png"
-PLAYER_SPRITES = None
+PLAYER_IDLE_SPRITE = "../../sprites/idle.png"
+PLAYER_RUN_SPRITE = "../../sprites/run.png"
 PLAYER_BULLET_SPRITE = "../../sprites/1.png"
 
 SHOOT_ENEMIES_BULLET_SPRITE = "../../sprites/1.png"
-SHOOT_ENEMIES_SPRITES = None
+SHOOT_ENEMIES_IDLE_SPRITE = "../../sprites/Fire_Spirit/Idle.png"
+SHOOT_ENEMIES_ATTACK_SPRITE = "../../sprites/Fire_Spirit/Shot.png"
+SHOOT_ENEMIES_DEATH_SPRITE = "../../sprites/Fire_Spirit/Dead.png"
 
-WEAKMOV_SPRITE = None
-STRMOV_SPRITE = None
+WEAKMOV_IDLE_SPRITE = "../../sprites/Skeleton/Idle.png"
+WEAKMOV_ATTACK_SPRITE = "../../sprites/Skeleton/Attack_1.png"
+WEAKMOV_DEATH_SPRITE = "../../sprites/Skeleton/Dead.png"
+WEAKMOV_WALK_SPRITE = "../../sprites/Skeleton/Walk.png"
+
+STRMOV_IDLE_SPRITE = "../../sprites/Plent/Idle.png"
+STRMOV_ATTACK_SPRITE = "../../sprites/Plent/Attack_1.png"
+STRMOV_DEATH_SPRITE = "../../sprites/Plent/Dead.png"
+STRMOV_WALK_SPRITE = "../../sprites/Plent/Walk.png"
 
 BOSS_BULLET_SPRITE = "../../sprites/1.png"
 BOSS_SPRITES = None
