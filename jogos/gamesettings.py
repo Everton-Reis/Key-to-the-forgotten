@@ -9,12 +9,12 @@ SCREEN_FULLSCREEN = False
 ENDLESS_MODE = False
 MAX_FLOOR = 10
 
-BOSS_FLOOR = 8
-BLOCK_SPEED = 1
+BOSS_FLOOR = 3
+BLOCK_SPEED = 2
 BLOCK_SIZE = 60
 
 CAMERA_SPEED = 0
-SHOOT_SPEED = 2000
+SHOOT_SPEED = 1000
 SPAWN_SPEED = 15000
 
 #settings
@@ -64,11 +64,11 @@ BOSS_SHOOT_MAX_OFFSET = 2
 BOSS_SHOOT_XP = 50
 
 BOSS_SIZE = (100, 100)
-BOSS_INITIAL_HEALTH = 1000
-BOSS_INITIAL_MAX_HEALTH = 1000
+BOSS_INITIAL_HEALTH = 10000
+BOSS_INITIAL_MAX_HEALTH = 10000
 BOSS_INITIAL_DAMAGE = 10
 BOSS_MAX_OFFSET = 2
-BOSS_ATTACK2_PROJECTS = 10
+BOSS_ATTACK2_PROJECTS = 20
 BOSS_XP = 1000
 
 
@@ -97,36 +97,44 @@ LS_EFFECT = 0.1
 LS_PROB = 10
 
 #sprites
-PLAYER_WEAPON_SPRITE = "../../sprites/weapon.png"
-PLAYER_IDLE_SPRITE = "../../sprites/idle.png"
-PLAYER_RUN_SPRITE = "../../sprites/run.png"
-PLAYER_BULLET_SPRITE = "../../sprites/1.png"
+PLAYER_WEAPON_SPRITE = "../../sprites/player/weapon.png"
+PLAYER_IDLE_SPRITE = "../../sprites/player/idle.png"
+PLAYER_RUN_SPRITE = "../../sprites/player/run.png"
+PLAYER_BULLET_SPRITE = "../../sprites/player/bullet.png"
 
-SHOOT_ENEMIES_BULLET_SPRITE = "../../sprites/1.png"
-SHOOT_ENEMIES_IDLE_SPRITE = "../../sprites/Fire_Spirit/Idle.png"
-SHOOT_ENEMIES_ATTACK_SPRITE = "../../sprites/Fire_Spirit/Shot.png"
-SHOOT_ENEMIES_DEATH_SPRITE = "../../sprites/Fire_Spirit/Dead.png"
+SHOOT_ENEMIES_BULLET_SPRITE = "../../sprites/shotenemy/bullet.png"
+SHOOT_ENEMIES_IDLE_SPRITE = "../../sprites/shotenemy/Idle.png"
+SHOOT_ENEMIES_ATTACK_SPRITE = "../../sprites/shotenemy/Shot.png"
+SHOOT_ENEMIES_DEATH_SPRITE = "../../sprites/shotenemy/Dead.png"
 
-WEAKMOV_IDLE_SPRITE = "../../sprites/Skeleton/Idle.png"
-WEAKMOV_ATTACK_SPRITE = "../../sprites/Skeleton/Attack_1.png"
-WEAKMOV_DEATH_SPRITE = "../../sprites/Skeleton/Dead.png"
-WEAKMOV_WALK_SPRITE = "../../sprites/Skeleton/Walk.png"
+WEAKMOV_IDLE_SPRITE = "../../sprites/weakenemy/Idle.png"
+WEAKMOV_ATTACK_SPRITE = "../../sprites/weakenemy/Attack_1.png"
+WEAKMOV_DEATH_SPRITE = "../../sprites/weakenemy/Dead.png"
+WEAKMOV_WALK_SPRITE = "../../sprites/weakenemy/Walk.png"
 
-STRMOV_IDLE_SPRITE = "../../sprites/Plent/Idle.png"
-STRMOV_ATTACK_SPRITE = "../../sprites/Plent/Attack_1.png"
-STRMOV_DEATH_SPRITE = "../../sprites/Plent/Dead.png"
-STRMOV_WALK_SPRITE = "../../sprites/Plent/Walk.png"
+STRMOV_IDLE_SPRITE = "../../sprites/strongenemy/Idle.png"
+STRMOV_ATTACK_SPRITE = "../../sprites/strongenemy/Attack_1.png"
+STRMOV_DEATH_SPRITE = "../../sprites/strongenemy/Dead.png"
+STRMOV_WALK_SPRITE = "../../sprites/strongenemy/Walk.png"
 
-BOSS_BULLET_SPRITE = "../../sprites/1.png"
-BOSS_SPRITES = None
+BOSS_BULLET_SPRITE = "../../sprites/boss/bullet.png"
+BOSS_IDLE_SPRITE = "../../sprites/boss/idle.png"
+BOSS_BIRTH_SPRITE = "../../sprites/boss/birth.png"
+BOSS_ATTACK2_SPRITE = "../../sprites/boss/attack2.png"
+BOSS_DEATH_SPRITE = "../../sprites/boss/death.png"
 
-DAMAGE_SPRITE = "../../sprites/buff.jpg"
-JUMP_SPRITE = "../../sprites/buff.jpg"
-SHOOT_SPRITE = "../../sprites/buff.jpg"
-HEALTH_SPRITE = "../../sprites/buff.jpg"
-VEL_SPRITE = "../../sprites/buff.jpg"
-DASH_SPRITE = "../../sprites/buff.jpg"
-LS_SPRITE = "../../sprites/buff.jpg"
+BOSS_SHOOT_BULLET_SPRITE = "../../sprites/bossenemy/bullet.png"
+BOSS_SHOOT_IDLE = "../../sprites/bossenemy/idle.png"
+BOSS_SHOOT_SHOT = "../../sprites/bossenemy/shot.png"
+BOSS_SHOOT_DEAD = "../../sprites/bossenemy/dead.png"
+
+DAMAGE_SPRITE = "../../sprites/buffs/damage.png"
+JUMP_SPRITE = "../../sprites/buffs/jump.png"
+SHOOT_SPRITE = "../../sprites/buffs/shoot.png"
+HEALTH_SPRITE = "../../sprites/buffs/health.png"
+VEL_SPRITE = "../../sprites/buffs/speed.png"
+DASH_SPRITE = "../../sprites/buffs/dash.png"
+LS_SPRITE = "../../sprites/buffs/lifesteal.png"
 
 
 KEY_SPRITE = "../../sprites/grass.png"

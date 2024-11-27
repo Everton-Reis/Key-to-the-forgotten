@@ -228,7 +228,7 @@ class Map:
 		else:
 			type = 1 if not is_boss_floor else 2
 			if type == 2:
-				enemies.boss = liben.Boss(1200 // 2, 300, (100,100,100))
+				enemies.boss = liben.Boss(SCREEN_SIZE[0] // 2 + 25*BLOCK_SPEED, SCREEN_SIZE[1] // 3)
 				boss_lifebar = Life.LifeBar(enemies.boss, "boss", screen)
 
 		new_plataforms, new_standing_plataforms = self.give_plataforms(type, True)

@@ -92,9 +92,48 @@ def load_sprites_enemy_death(object, delta, screen):
 
 	if object.death_current_sprite == len(object.death_sprites) - 1:
 		object.death_time = 0
-		object.death_current_sprite = 0
+		return
 
 	screen.blit(frame, position)
+
+def load_sprites_boss_death(object, delta, screen):
+	object.death_time += delta
+
+	if object.death_time % 500 // object.death_frame_rate == 0:
+		object.death_current_sprite = (object.death_current_sprite + 1) % len(object.death_sprites)
+
+	frame = object.death_sprites[object.death_current_sprite]
+	position = (object.rect.x - object.rect.width * object.death_x, object.rect.y - object.rect.height*object.death_y)
+
+	if object.death_current_sprite == len(object.death_sprites) - 1:
+		object.death_count += 1
+		object.death_current_sprite = 0
+
+		if object.death_count == object.max_death_count:
+			object.death_time = 0
+			return
+
+	screen.blit(frame, position)
+
+def load_sprites_boss_birth(object, delta, screen):
+	object.birth_time += delta
+
+	if object.birth_time % 500 // object.birth_frame_rate == 0:
+		object.birth_current_sprite = (object.birth_current_sprite + 1) % len(object.birth_sprites)
+
+	frame = object.birth_sprites[object.birth_current_sprite]
+	position = (object.rect.x - object.rect.width * object.birth_x, object.rect.y - object.rect.height*object.birth_y)
+
+	if object.birth_current_sprite == len(object.birth_sprites) - 1:
+		object.birth_count += 1
+		object.birth_current_sprite = 0
+
+		if object.birth_count == object.max_birth_count:
+			object.birth_time = 0
+			return
+
+	screen.blit(frame, position)
+
 
 
 def load_sprites_enemy_attack(object, delta, screen):
@@ -142,7 +181,6 @@ def load_sprites_enemy_idle(object, delta, screen):
 
 	frame = object.idle_sprites[object.idle_current_sprite]
 	position = (object.rect.x - object.rect.width * object.idle_x_0, object.rect.y - object.rect.height*object.idle_y_0)
-
 
 	if object.direction == 1:
 		frame = pygame.transform.flip(frame, True, False)

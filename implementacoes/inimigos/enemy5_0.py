@@ -3,6 +3,7 @@ import random
 import math
 import sys
 import sprites
+from abc import ABC, abstractmethod
 
 sys.path.append("../")
 
@@ -13,7 +14,7 @@ from gamesettings import *
 import bullets as libat
 import player
 
-class BaseEnemy():
+class BaseEnemy(ABC):
 
 	def __init__(self, x, y, color = None, w = 0, h = 0):
 		self.delta = DELTA_GAME
@@ -52,8 +53,8 @@ class BaseEnemy():
 
 
 	def change_direction(self):
-		new_direction = random.choice((0, 1))
-		return new_direction
+		self.direction = random.choice((0, 1))
+
 
 	def collide(self, plataforms, player, enemies, screen):
 		pass
@@ -78,13 +79,18 @@ class BaseEnemy():
 		if self.health <= 0:
 			self.killed_by_player = True
 			self.alive = False
-			self.death_time += 1
+
+			if self.death_time == 0:
+				self.death_time += 1
+
 
 		if self.rect.y > 1000:
 			self.alive = False
-			self.death_time += 1
 
+			if self.death_time == 0:
+				self.death_time += 1
 
+	@abstractmethod
 	def attack(self, player, screen):
 		pass
 
@@ -109,7 +115,6 @@ class BaseEnemy():
 
 		return True
 
-
 class MovingEnemy(BaseEnemy):
 	def __init__(self, x, y, color, w, h):
 		super().__init__(x,y, color, w, h)
@@ -121,10 +126,12 @@ class MovingEnemy(BaseEnemy):
 	def load(self, screen):
 		if self.death_time > 0:
 			sprites.load_sprites_enemy_death(self, self.delta, screen)
+			return
 
 		if not self.alive:
 			return
 
+		# pygame.draw.rect(screen, self.color, self.rect)
 		if self.walk_time > 0 and self.attack_time == 0:
 			sprites.load_sprites_enemy_walk(self, self.delta, screen)
 		elif self.idle_time >= 0 and self.attack_time == 0:
@@ -158,17 +165,18 @@ class MovingEnemy(BaseEnemy):
 			self.dx = 0
 
 	def collide(self, plataforms, player, enemies, screen):
-		"""
-		if len(enemies.enemies) > 0:
+		if enemies and len(enemies.enemies) > 0:
 			for enemy in enemies.enemies:
-				if self.rect.colliderect(enemy.rect):
+				if enemy != self and self.rect.colliderect(enemy.rect):
+					if not self.seeingplayer:
+						self.invert_direction()
+
 					if self.speed_y > 0:
 						self.rect.bottom = enemy.rect.top
 						self.speed_y = 0
 					elif self.speed_y < 0:
 						self.rect.top = enemy.rect.bottom
 						self.speed_y = 0
-		"""
 
 		if player and player.rect:
 			if self.rect.colliderect(player.rect):
@@ -194,15 +202,16 @@ class MovingEnemy(BaseEnemy):
 		if self.walk_time == 0 and self.dx != 0:
 			self.walk_time += 1
 
-		"""
-		if len(enemies.enemies) > 0:
+		if enemies and len(enemies.enemies) > 0:
 			for enemy in enemies.enemies:
-				if self.rect.colliderect(enemy.rect):
+				if enemy != self and self.rect.colliderect(enemy.rect):
+					if not self.seeingplayer:
+						self.invert_direction()
+
 					if self.dx > 0:
 						self.rect.right = enemy.rect.left
 					if self.dx < 0:
 						self.rect.left = enemy.rect.right
-		"""
 
 		if player and player.rect:
 			if self.rect.colliderect(player.rect):
@@ -268,7 +277,7 @@ class MovingEnemy(BaseEnemy):
 			action = random.choice([1,2])
 
 			if action == 1:
-				self.direction = self.change_direction()
+				self.change_direction()
 			elif action == 2:
 				self.move()
 
@@ -326,7 +335,6 @@ class WeakMovingEnemy(MovingEnemy):
 		self.death_frame_rate = 10
 		self.death_current_sprite = 0
 
-		self.rect = self.idle_sprites[0].get_rect()
 		self.rect = sprites.cut_transparent_rect(self.idle_sprites[0])
 		self.rect.center = (x,y)
 
@@ -380,7 +388,6 @@ class StrongMovingEnemy(MovingEnemy):
 		self.death_frame_rate = 10
 		self.death_current_sprite = 0
 
-		self.rect = self.idle_sprites[0].get_rect()
 		self.rect = sprites.cut_transparent_rect(self.idle_sprites[0])
 		self.rect.center = (x,y)
 		self.health = STRMOV_INITIAL_HEALTH
@@ -396,15 +403,14 @@ class ShootingEnemy(BaseEnemy):
 		self.idle_sprites = sprites.cut_sheet(SHOOT_ENEMIES_IDLE_SPRITE, 6, 1, 1.5)
 		self.attack_sprites = sprites.cut_sheet(SHOOT_ENEMIES_ATTACK_SPRITE, 8, 1, 1.5)
 		self.death_sprites = sprites.cut_sheet(SHOOT_ENEMIES_DEATH_SPRITE, 5, 1, 1.5)
-		self.rect = self.idle_sprites[0].get_rect()
 		self.rect = sprites.cut_transparent_rect(self.idle_sprites[0])
 		self.rect.center = (x, y)
 
 		self.idle_x_0 = 2
-		self.idle_y_0 = 1.1
+		self.idle_y_0 = 1.2
 
 		self.idle_x_1 = 2
-		self.idle_y_1 = 1.1
+		self.idle_y_1 = 1.2
 
 		self.attack_x_0 = 2
 		self.attack_y_0 = 1
@@ -438,7 +444,7 @@ class ShootingEnemy(BaseEnemy):
 
 		self.timer -= 1
 		if self.timer <= 0:
-			self.direction = self.change_direction()
+			self.change_direction()
 			self.timer = self.max_timer
 
 	def collide(self, plataforms, player, enemies = []):
@@ -513,6 +519,7 @@ class ShootingEnemy(BaseEnemy):
 		if not self.alive:
 			return
 
+		# pygame.draw.rect(screen, self.color, self.rect)
 		if self.idle_time >= 0 and self.attack_time == 0:
 			sprites.load_sprites_enemy_idle(self, self.delta, screen)
 		elif self.attack_time > 0:
@@ -539,6 +546,38 @@ class ShootingEnemy(BaseEnemy):
 class BossShootingEnemy(BaseEnemy):
 	def __init__(self, x,y, color):
 		super().__init__(x,y, color, BOSS_SHOOT_SIZE[0], BOSS_SHOOT_SIZE[1])
+		self.idle_sprites = sprites.cut_sheet(BOSS_SHOOT_IDLE, 6, 1, 1.5)
+		self.attack_sprites = sprites.cut_sheet(BOSS_SHOOT_SHOT, 8, 1, 1.5)
+		self.death_sprites = sprites.cut_sheet(BOSS_SHOOT_DEAD, 5, 1, 1.5)
+
+		sh_s = sprites.cut_sheet(SHOOT_ENEMIES_IDLE_SPRITE, 6, 1, 1.5)
+		self.rect = sprites.cut_transparent_rect(sh_s[0])
+		self.rect.center = (x, y)
+
+		self.idle_x_0 = 2
+		self.idle_y_0 = 1.1
+
+		self.idle_x_1 = 2
+		self.idle_y_1 = 1.1
+
+		self.attack_x_0 = 2
+		self.attack_y_0 = 0.9
+
+		self.attack_x_1 = 2
+		self.attack_y_1 = 0.9
+
+		self.death_x = 2
+		self.death_y = 1.1
+
+		self.idle_current_sprite = 0
+		self.idle_frame_rate = 10
+
+		self.attack_current_sprite = 0
+		self.attack_frame_rate = 10
+
+		self.death_current_sprite = 0
+		self.death_frame_rate = 10
+
 		self.health = BOSS_SHOOT_INITIAL_HEALTH
 		self.damage = BOSS_SHOOT_INITIAL_DAMAGE
 		self.max_offset = BOSS_SHOOT_MAX_OFFSET
@@ -547,14 +586,34 @@ class BossShootingEnemy(BaseEnemy):
 		self.xp = BOSS_SHOOT_XP
 		self.bullets = libat.Bullets()
 
+	def load(self, screen):
+		if self.death_time > 0:
+			sprites.load_sprites_enemy_death(self, self.delta, screen)
+			return
+
+		if not self.alive:
+			return
+
+		if self.idle_time >= 0 and self.attack_time == 0:
+			sprites.load_sprites_enemy_idle(self, self.delta, screen)
+		elif self.attack_time > 0:
+			sprites.load_sprites_enemy_attack(self, self.delta, screen)
+
 	def attack(self, player, screen):
 		if not self.alive:
 			return
+
+		dx = self.rect.center[0] - player.rect.center[0]
+		if dx > 0:
+			self.direction = 1
+		elif dx < 0:
+			self.direction = 0
 
 		bullet = libat.Bullet((self.rect.center[0], self.rect.center[1]),
 			(player.rect.center[0], player.rect.center[1]),
 				self.damage, (0,50,50), SHOOT_ENEMIES_BULLET_SPRITE)
 		bullet.shooted = True
+		self.attack_time += 1
 		self.bullets.bullets.append(bullet)
 
 	def move(self, time):
@@ -564,6 +623,46 @@ class BossShootingEnemy(BaseEnemy):
 class Boss(BaseEnemy):
 	def __init__(self, x, y, color):
 		super().__init__(x,y, color, BOSS_SIZE[0], BOSS_SIZE[1])
+		self.idle_sprites = sprites.cut_sheet(BOSS_IDLE_SPRITE, 2, 2, 1)
+		self.attack_sprites = sprites.cut_sheet(BOSS_ATTACK2_SPRITE, 2, 2, 2.5)
+		self.birth_sprites = sprites.cut_sheet(BOSS_BIRTH_SPRITE, 2, 2, 1.5)
+		self.death_sprites = sprites.cut_sheet(BOSS_DEATH_SPRITE, 2, 2, 1.5)
+		self.rect = sprites.cut_transparent_rect(self.idle_sprites[0])
+		self.rect.center = (x, y)
+		self.direction = 0
+
+		self.idle_x_0 = 0.03
+		self.idle_y_0 = 0.03
+
+		self.idle_x_1 = 0.03
+		self.idle_y_1 = 0.03
+
+		self.attack_x_0 = 0.15
+		self.attack_y_0 = 0.1
+
+		self.death_x = 0.03
+		self.death_y = 0.03
+
+		self.birth_x = 0.03
+		self.birth_y = 0.03
+
+		self.idle_current_sprite = 0
+		self.idle_frame_rate = 0.5
+
+		self.death_current_sprite = 0
+		self.death_frame_rate = 10
+		self.death_count = 0
+		self.max_death_count = 5
+
+		self.attack_current_sprite = 0
+		self.attack_frame_rate = 5
+
+		self.birth_time = 1
+		self.birth_count = 0
+		self.max_birth_count = 5
+		self.birth_current_sprite = 0
+		self.birth_frame_rate = 2
+
 		self.health = BOSS_INITIAL_HEALTH
 		self.MAX_HEALTH = BOSS_INITIAL_MAX_HEALTH
 		self.bullets = libat.Bullets()
@@ -584,9 +683,29 @@ class Boss(BaseEnemy):
 		self.rect.y += self.max_offset*math.sin(time.get_ticks() / 500)
 		self.die()
 
+	def load(self, screen):
+		if self.death_time > 0:
+			sprites.load_sprites_boss_death(self, self.delta, screen)
+			return
+
+		if not self.alive:
+			return
+
+		if self.birth_time > 0:
+			sprites.load_sprites_boss_birth(self, self.delta, screen)
+			return
+
+		# pygame.draw.rect(screen, self.color, self.rect)
+		if self.idle_time >= 0  and self.attack2_count == 0 and self.attack_time == 0:
+			sprites.load_sprites_enemy_idle(self, self.delta, screen)
+		elif self.attack_time > 0 or self.attack2_count > 0:
+			sprites.load_sprites_enemy_attack(self, self.delta, screen)
+
 
 	def attack(self, player, screen):
-		if not player.alive or not self.alive:
+		if not player.alive or not self.alive or self.birth_time > 0:
+			self.attack_time = 0
+			self.attack_current_sprite = 0
 			return
 
 		if self.attack2_isrunning:
@@ -611,7 +730,13 @@ class Boss(BaseEnemy):
 			self.attack3()
 
 
-	def attack1(self, player, screen):
+	def attack1(self, player):
+		dx = self.rect.center[0] - player.rect.center[0]
+		if dx > 0:
+			self.direction = 1
+		elif dx < 0:
+			self.direction = 0
+
 		bullet = libat.Bullet((self.rect.center[0], self.rect.center[1]),
 			(player.rect.center[0], player.rect.center[1]),
 				self.damage, (0,50,50), BOSS_BULLET_SPRITE)
@@ -621,6 +746,7 @@ class Boss(BaseEnemy):
 
 	def attack2(self):
 		#ataque circular
+		self.direction = 0
 		number = BOSS_ATTACK2_PROJECTS # != 0
 		radius = 50
 
@@ -638,17 +764,20 @@ class Boss(BaseEnemy):
 
 		self.attack2_config += 1
 		self.attack2_count += 1
+		self.attack_time += 1
 
 		if self.attack2_count == self.attack2_times:
 			self.attack2_isrunning = False
 			self.attack2_count = 0
+			self.attack_time = 0
+			self.attack_current_sprite = 0
 
 			self.attack2_times = random.randint(5,10)
 
 
 	def attack3(self):
 		number = random.randint(3,6)
-		radius = 150
+		radius = 200
 
 		for i in range(number):
 			angle = (2 * math.pi / number) * i
@@ -660,7 +789,7 @@ class Boss(BaseEnemy):
 
 		self.attack3_isrunning = True
 
-	def move_boss(self, time):
+	def update(self, time):
 		self.move(time)
 
 		if len(self.enemies) > 0:
@@ -732,9 +861,9 @@ class Enemies():
 		choices = [random.choice(enemies_types)(positions[i][0], positions[i][1]) for i in range(number)]
 
 		for choice in choices:
-			choice.damage += multiplier*floor
-			choice.health += multiplier*floor
-			choice.xp += multiplier*floor
+			choice.damage += multiplier*choice.damage*floor
+			choice.health += multiplier*choice.health*floor
+			choice.xp += multiplier*choice.xp
 
 
 			if isinstance(choice, MovingEnemy):
@@ -805,11 +934,11 @@ class Enemies():
 				enemy.attack(player, screen)
 
 		if self.boss:
-			self.boss.attack(player)
+			self.boss.attack(player, screen)
 
 			if len(self.boss.enemies) > 0:
 				for enemy in self.boss.enemies:
-					enemy.attack(player)
+					enemy.attack(player, screen)
 
 
 
@@ -850,9 +979,11 @@ class Enemies():
 				player.total_exp += self.boss.xp
 				self.boss.xp = 0
 
+
+
 			if len(self.boss.enemies) > 0:
 				for enemy in self.boss.enemies:
-					if enemy.alive == False and len(enemy.bullets.bullets) == 0:
+					if enemy.alive == False and len(enemy.bullets.bullets) == 0 and enemy.death_time == 0:
 						self.last_enemy = enemy
 						if enemy.killed_by_player:
 							player.total_exp += enemy.xp
@@ -862,7 +993,7 @@ class Enemies():
 
 
 			self.enemies = self.mov_enemies + self.shoot_enemies
-			if not self.boss.alive:
+			if not self.boss.alive and self.boss.death_time == 0:
 				if not self.enemies and not self.boss.enemies:
 					if not self.key.visible:
 						if self.last_enemy:

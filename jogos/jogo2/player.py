@@ -27,7 +27,7 @@ class Player:
 		self.run_current_sprite = 0
 		self.run_frame_rate = 10
 
-		self.gravity_y = 0.5 # pixels^2 / frame
+		self.gravity_y = 0.6 # pixels^2 / frame
 		self.speed_y = 0
 		self.jump_count = 0
 		self.dash_count = 0
@@ -126,13 +126,18 @@ class Player:
 
 	def life_steal(self, enemy):
 		if enemy.health > 0 and self.health < self.MAX_HEALTH:
-			self.health += self.ls * (enemy.health + 0.5*self.damage)
+			delta = self.health + self.ls * 0.5*self.damage
+			if delta >= self.MAX_HEALTH:
+				self.health = self.MAX_HEALTH
+			else:
+				self.health = delta
 
 
 	def draw(self, screen, delta, mouse = None):
 		if not self.alive:
 			return
 
+		# pygame.draw.rect(screen, (10,10,10), self.rect)
 		sprites.load_sprites_player(self, delta, screen)
 		self.draw_status(screen)
 
@@ -148,15 +153,15 @@ class Player:
 			self.on_ground = False
 			for plataform in plataforms:
 				if self.rect.colliderect(plataform):
-					if self.speed_y > 0:
+					if self.speed_y < 0:
+						self.rect.top = plataform.bottom
+						self.speed_y = 0
+					elif self.speed_y > 0:
 						self.rect.bottom = plataform.top
 						self.speed_y = 0
 						self.on_ground = True
 						self.jump_count = 0
 						self.dash_count = 0
-					elif self.speed_y < 0:
-						self.rect.top = plataform.bottom
-						self.speed_y = 0
 
 		if enemies and len(enemies.enemies) > 0:
 			for enemy in enemies.enemies:

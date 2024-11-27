@@ -70,14 +70,15 @@ class GameManager:
 		time_shoot_enemy = 0
 		time_enemy_spawn = 0
 
-		while self.is_running:      
+		while self.is_running:   
+			self.clock.tick(60)   
 			delta = 50
 			time_shoot_enemy += delta
 			time_map += delta
 			time_enemy_spawn += delta
 
 			if self.buff_paused:
-				self.is_running, self.buff_paused = self.buffs.choose_buff(self.player, self.screen, (200,500))
+				self.is_running, self.buff_paused = self.buffs.choose_buff(self.player, self.screen, (200,500), pygame.mouse)
 
 			if time_map >= self.camera_speed:
 				self.extend = mapa1.move_map(self.plataforms)
@@ -95,6 +96,8 @@ class GameManager:
 			self.event()
 			self.lifebar_player.update()
 			self.expbar_player.update()
+
+			#para o bom funcionamento das animações, o draw deve vir antes do update
 			self.draw(delta)
 			self.update()
 
@@ -111,12 +114,10 @@ class GameManager:
 			if event.type == pygame.QUIT:
 				self.is_running = False
 
-			"""
 			if event.type == pygame.MOUSEBUTTONDOWN:
 				#pra debug
 				if event.button == 2:
 					self.player.total_exp = self.player.next_level
-			"""
 
 			self.player.on_event(event, pygame.mouse)
 
@@ -134,7 +135,10 @@ class GameManager:
 			self.lifebar_boss = None
 
 		if self.extend:
-			self.plataforms, self.standing_plataforms, self.lifebar_boss = mapa1.extend_map(self.enemies, self.plataforms, self.standing_plataforms, self.screen)
+			self.plataforms, self.standing_plataforms, lifebar_boss = mapa1.extend_map(self.enemies, self.plataforms, self.standing_plataforms, self.screen)
+
+			if not self.lifebar_boss:
+				self.lifebar_boss = lifebar_boss
 
 		if self.player.level_up():
 			self.buff_paused = True
@@ -146,6 +150,7 @@ class GameManager:
 	def draw(self, delta):
 		# Renderizaçao
 		self.screen.fill((255, 255, 255))
+		mapa1.draw_plataforms(self.screen, self.plataforms, self.height, self.camera_offset)
 		self.player.draw(self.screen, delta, pygame.mouse.get_pos())
 
 		self.player.bullets.shoot(self.screen, self.enemies, self.plataforms, self.player)
@@ -155,10 +160,9 @@ class GameManager:
 		self.enemies.mov_attack(self.player, self.plataforms, self.screen)
 		self.enemies.check_die(self.player)
 
-		mapa1.draw_plataforms(self.screen, self.plataforms, self.height, self.camera_offset)
 
 		font_status = pygame.font.Font(None, 15)
-		floor_text = f"Andar : {mapa1.floor}"
+		floor_text = f"Andar : {mapa1.floor - 1}"
 		floor_surface = self.font.render(floor_text, True, (0,0,0))
 		self.screen.blit(floor_surface, (10, 900))
 
