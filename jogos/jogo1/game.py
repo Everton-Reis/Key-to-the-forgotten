@@ -35,7 +35,7 @@ class GameManager:
 		self.font = pygame.font.Font(None, 36) # tamanho 36
 
 		# Objetos
-		self.player = player.Player(self.width // 2, self.height // 2, 25, 25, "../../sprites/weapon.png")
+		self.player = player.Player(self.width // 2, self.height // 2, 25, 25, "../../sprites/player/weapon.png")
 		self.lifebar = Life.LifeBar(self.player, self.screen)
 
 		self.plataforms, self.standing_plataforms = mapa1.give_plataforms()

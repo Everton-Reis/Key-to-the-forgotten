@@ -126,7 +126,11 @@ class Player:
 
 	def life_steal(self, enemy):
 		if enemy.health > 0 and self.health < self.MAX_HEALTH:
-			self.health += self.ls * (enemy.health + 0.5*self.damage)
+			delta = self.health + self.ls * 0.5*self.damage
+			if delta >= self.MAX_HEALTH:
+				self.health = self.MAX_HEALTH
+			else:
+				self.health = delta
 
 
 	def draw(self, screen, delta, mouse = None):
@@ -145,19 +149,29 @@ class Player:
 		if not self.rect:
 			return
 
-		if len(plataforms) > 0:     
+		ver_colis = False
+		if len(plataforms) > 0:
 			self.on_ground = False
+
 			for plataform in plataforms:
 				if self.rect.colliderect(plataform):
-					if self.speed_y < 0:
-						self.rect.top = plataform.bottom
-						self.speed_y = 0
-					elif self.speed_y > 0:
-						self.rect.bottom = plataform.top
-						self.speed_y = 0
-						self.on_ground = True
-						self.jump_count = 0
-						self.dash_count = 0
+					#indica se o player está acima ou abaixo da plataforma
+					delta_y = self.rect.centery - plataform.centery
+					#distancia maxima pra haver colisão
+					overlap_y = self.rect.height / 2 + plataform.height / 2
+
+					if self.speed_y > 0 and delta_y < 0:
+						if abs(delta_y) <= overlap_y:
+							self.rect.bottom = plataform.top
+							self.speed_y = 0
+							self.on_ground = True
+							self.jump_count = 0
+							self.dash_count = 0
+					elif self.speed_y < 0 and delta_y > 0:
+						if abs(delta_y) <= overlap_y:
+							ver_colis = True
+							self.rect.top = plataform.bottom
+							self.speed_y = 0
 
 		if enemies and len(enemies.enemies) > 0:
 			for enemy in enemies.enemies:
@@ -174,14 +188,63 @@ class Player:
 						self.dash_count = 0     
 
 		self.rect.x += self.dx
-
 		if len(plataforms) > 0:
 			for plataform in plataforms:
 				if self.rect.colliderect(plataform):
-					if self.dx > 0:
-						self.rect.right = plataform.left
-					if self.dx < 0:
-						self.rect.left = plataform.right
+					delta_x = self.rect.centerx - plataform.centerx
+					#distancia maxima pra haver colisão
+					overlap_x = self.rect.width // 2 + plataform.width // 2
+					delta_y = self.rect.centery - plataform.centery
+					overlap_y = self.rect.height / 2 + plataform.height / 2
+
+					# o problema principal desse algoritmo é, na medida em que
+					# block_speed aumenta, não conseguir diferenciar dentre dois tipos de colisões
+					# verticais que acabam atrapalhando as horizontais:
+					# 1° -> o player colide enquanto está embaixo da plataforma
+					# 2° -> o player colide horizontalmente enquanto cai (speed_y > 0)
+					# quando block_speed aumenta (de 1 para 2 já é possivel notar)
+					# essas duas colisões se tornam a mesma colisão pois na 2°,
+					# enquanto o player colide horizontalmente, ele vai acabar ficando
+					# embaixo da plataforma por estar caindo + a plataforma estar se movendo para baixo
+					# por isso tentei encontrar uma tolerancia para a colisão vertical
+					# de forma que a horizontal possa acontecer
+
+					# achei essa tolerancia percebendo que abs(delta_y) parece assumir um
+					# valor minimo quando o player colide verticalmente e está embaixo da plataforma,
+					# onde esse valor minímo parece ser aproximadamente overlap_y - n*BLOCK_SPEED
+					# onde n depende de BLOCK_SPEED
+					# n = 2 funciona muito bem para speed < 4, mas para maiores velocidades
+					# um novo numero de ser encontrado
+					# para encontrar o valor exato seria preciso talvez considerar o fps do jogo,
+					# e o tamanho dos objetos colidindo de uma forma mais complicada
+					# essa tolerancia faz com que a 1° colisão se distingua da 2°
+
+					# enquanto um melhor algoritmo de colisão não é implementado, esse deve servir
+
+					# não sei se compensa adicionar o mesmo algoritmo para os inimigos-plataformas e
+					# inimigos-inimigos, pois a colisão entre eles não acontece de forma tão complexa,
+					# e por mais que aconteça eventualmente de um inimigo acabar subindo em cima do outro,
+					# por opinião pessoal, isso não deveria estragar a experiência do jogo
+
+					# descomente a linha print(abs(delta_y), overlap_y - tolerancia) para ver os valores
+
+					tolerancia = 2*BLOCK_SPEED
+
+					if self.speed_y > 0 and delta_y > 0:
+						# print(abs(delta_y), overlap_y - tolerancia)
+						if abs(delta_y) >= overlap_y - tolerancia:
+							ver_colis = True
+
+					if not ver_colis:
+						if self.dx > 0 and delta_x < 0:
+							if abs(delta_x) <= overlap_x:
+								self.rect.right = plataform.left
+								self.dx = 0
+						elif self.dx < 0 and delta_x > 0:
+							if abs(delta_x) <= overlap_x:
+								self.rect.left = plataform.right
+								self.dx = 0	
+
 
 		if enemies and len(enemies.enemies) > 0:
 			for enemy in enemies.enemies:
