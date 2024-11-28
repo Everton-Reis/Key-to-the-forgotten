@@ -33,6 +33,11 @@ class GameManager:
 		self.screen = pygame.display.set_mode(screen_size)
 		self.screen.fill((0, 0, 0))
 
+		self.background_music = BACKGROUND_MUSIC
+		self.death_music = pygame.mixer.Sound(DEATH_MUSIC)
+		self.death_played = False
+		self.death_channel = pygame.mixer.Channel(0)
+
 		self.font = pygame.font.Font(None, 36) # tamanho 36
 
 		# Objetos
@@ -66,6 +71,9 @@ class GameManager:
 		self.clock = pygame.time.Clock()
 		self.is_running = True
 
+		pygame.mixer.music.load(BACKGROUND_MUSIC)
+		pygame.mixer.music.play(loops = -1)
+
 		time_map = 0
 		time_shoot_enemy = 0
 		time_enemy_spawn = 0
@@ -76,6 +84,13 @@ class GameManager:
 			time_shoot_enemy += delta
 			time_map += delta
 			time_enemy_spawn += delta
+
+			if not self.player.alive:
+				pygame.mixer.music.stop()
+				if not self.death_channel.get_busy() and not self.death_played:
+					self.death_channel.play(self.death_music)
+					self.death_played = True
+
 
 			if self.buff_paused:
 				self.is_running, self.buff_paused = self.buffs.choose_buff(self.player, self.screen, (200,500), pygame.mouse)

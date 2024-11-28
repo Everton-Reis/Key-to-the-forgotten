@@ -138,3 +138,15 @@ LS_SPRITE = "../../sprites/buffs/lifesteal.png"
 
 
 KEY_SPRITE = "../../sprites/grass.png"
+
+
+#sfx e musica
+BACKGROUND_MUSIC = "../../sfx/background.mp3"
+DEATH_MUSIC = "../../sfx/deathmusic.mp3"
+
+PLAYER_ATTACK_SFX = "../../sfx/player/takedamage.mp3"
+PLAYER_LEVEL_SFX = "../../sfx/player/levelup.mp3"
+PLAYER_JUMP_SFX = "../../sfx/player/jump.mp3"
+PLAYER_RUN_SFX = "../../sfx/player/run.mp3"
+PLAYER_DEATH_SFX = "../../sfx/player/death.mp3"
+PLAYER_GET_SFX = "../../sfx/player/getdamage.mp3"
