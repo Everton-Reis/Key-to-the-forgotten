@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="32" height="44" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="1">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="32" height="44" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="142">
  <tileset firstgid="1" source="PixelFantasy_Caves_1.0/CavernaT.tsx"/>
  <layer id="1" name="map_layout" width="32" height="44">
   <data encoding="csv">
@@ -97,6 +97,55 @@
 146,146,146,146,146,146,147,146,146,147,146,146,146,147,147,146,147,146,147,146,146,146,146,146,146,147,146,146,147,146,146,147
 </data>
  </layer>
+ <objectgroup id="7" name="end_objects">
+  <object id="85" type="colisor" x="481" y="-0.5" width="31.5" height="704.5"/>
+  <object id="91" type="colisor" x="-0.25" y="-0.5" width="30.75" height="704"/>
+  <object id="93" name="flor" type="colisor" x="30.25" y="0.5" width="33.5" height="15"/>
+  <object id="95" type="colisor" x="31" y="15" width="18.25" height="16"/>
+  <object id="97" type="colisor" x="49.5" y="16.25" width="7.5" height="7.25"/>
+  <object id="99" name="floor" type="colisor" x="30.25" y="97" width="288.75" height="29.5"/>
+  <object id="100" name="floor" type="colisor" x="113" y="0.0909091" width="302.955" height="31.9091"/>
+  <object id="101" name="flor" type="colisor" x="449.091" y="0" width="32.5455" height="16.9091"/>
+  <object id="103" type="colisor" x="464.545" y="16.3636" width="16.5455" height="15.8182"/>
+  <object id="104" type="colisor" x="455.091" y="16.1818" width="8.90909" height="8.90909"/>
+  <object id="105" name="floor" type="colisor" x="353.75" y="96" width="128.25" height="31.25"/>
+  <object id="106" name="floor" type="colisor" x="352.333" y="224" width="128.667" height="31.6667"/>
+  <object id="107" name="floor" type="colisor" x="30.6667" y="224.25" width="256.667" height="31.0833"/>
+  <object id="108" name="floor" type="colisor" x="29.3333" y="353" width="129.667" height="30.3333"/>
+  <object id="109" name="floor" type="colisor" x="258.333" y="353.333" width="223" height="31.3333"/>
+  <object id="110" name="floor" type="colisor" x="352.667" y="511.667" width="131" height="32"/>
+  <object id="111" name="floor" type="colisor" x="30.3333" y="671.667" width="452.333" height="33"/>
+  <object id="112" name="floor" type="colisor" x="30.3333" y="512.333" width="289.667" height="29.6667"/>
+ </objectgroup>
+ <objectgroup id="8" name="map_objects">
+  <object id="113" type="colisor" x="482.75" y="-1" width="30.25" height="705"/>
+  <object id="115" type="colisor" x="-0.5" y="0" width="31.5" height="705"/>
+  <object id="116" name="floor" type="colisor" x="128.667" y="544" width="126" height="31"/>
+  <object id="118" name="floor" type="colisor" x="353.667" y="544" width="130.333" height="31.3333"/>
+  <object id="119" name="floor" type="colisor" x="30" y="384.5" width="160.5" height="30.5"/>
+  <object id="120" name="floor" type="colisor" x="289" y="384" width="195" height="31"/>
+  <object id="121" name="floor" type="colisor" x="353.5" y="256.5" width="133" height="30"/>
+  <object id="122" name="floor" type="colisor" x="28" y="256.75" width="258.5" height="30.75"/>
+  <object id="123" name="floor" type="colisor" x="26" y="97" width="68" height="31.5"/>
+  <object id="124" name="floor" type="colisor" x="353.333" y="96.3333" width="133.333" height="30.3333"/>
+  <object id="125" name="floor" type="colisor" x="162.333" y="97" width="156" height="30.3333"/>
+  <object id="126" type="colisor" x="29.5" y="0" width="456.273" height="30.2273"/>
+  <object id="127" type="colisor" x="451.75" y="85.75" width="33.25" height="10.25"/>
+  <object id="128" type="colisor" x="31" y="30.5" width="26" height="14.25"/>
+  <object id="129" type="colisor" x="31.25" y="82.875" width="26" height="14.25"/>
+  <object id="130" type="colisor" x="451.375" y="127.125" width="33.25" height="10.25"/>
+  <object id="131" type="colisor" x="27.625" y="128.625" width="33.25" height="10.25"/>
+  <object id="132" type="colisor" x="24.625" y="246.625" width="33.25" height="10.25"/>
+  <object id="133" type="colisor" x="26.625" y="287.875" width="33.25" height="10.25"/>
+  <object id="134" type="colisor" x="451.125" y="246.125" width="33.25" height="10.25"/>
+  <object id="135" type="colisor" x="451.375" y="286.375" width="33.25" height="10.25"/>
+  <object id="136" type="colisor" x="454.125" y="374.875" width="33.25" height="10.25"/>
+  <object id="137" type="colisor" x="453.625" y="415.625" width="33.25" height="10.25"/>
+  <object id="138" type="colisor" x="452.625" y="532.625" width="33.25" height="10.25"/>
+  <object id="139" type="colisor" x="452.125" y="576.375" width="33.25" height="10.25"/>
+  <object id="140" type="colisor" x="28.125" y="415.625" width="33.25" height="10.25"/>
+  <object id="141" type="colisor" x="29.375" y="372.542" width="33.25" height="10.25"/>
+ </objectgroup>
  <layer id="3" name="extend_map_layout" width="32" height="44">
   <data encoding="csv">
 265,2147484959,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1308,132,
@@ -145,7 +194,19 @@
 196,2147485023,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1182,146
 </data>
  </layer>
- <layer id="4" name="Camada de Blocos 4" width="32" height="44">
+ <objectgroup id="6" name="extend_map_objects">
+  <object id="68" type="colisor" x="481.75" y="-0.75" width="30.2188" height="704.813"/>
+  <object id="71" type="colisor" x="0" y="-0.25" width="30.75" height="704.5"/>
+  <object id="72" name="floor" type="colisor" x="32" y="96.6667" width="286" height="30.6667"/>
+  <object id="73" name="floor" type="colisor" x="385" y="96.6667" width="97.3333" height="30.3333"/>
+  <object id="74" name="floor" type="colisor" x="353" y="256.333" width="128.667" height="30.3333"/>
+  <object id="77" name="floor" type="colisor" x="225.333" y="384.667" width="257.333" height="29.3333"/>
+  <object id="78" name="floor" type="colisor" x="28.6667" y="256.667" width="226" height="30.3333"/>
+  <object id="79" name="floor" type="colisor" x="29.6667" y="384.667" width="130" height="30"/>
+  <object id="80" name="floor" type="colisor" x="30.3333" y="544.333" width="255" height="30"/>
+  <object id="81" name="floor" type="colisor" x="352.333" y="543.667" width="132.333" height="31.3333"/>
+ </objectgroup>
+ <layer id="4" name="boss_map_layout" width="32" height="44">
   <data encoding="csv">
 2147483780,1073742349,1497,1487,1487,1494,1497,1494,1501,722,0,0,0,0,0,0,0,0,0,0,0,0,2147484370,1487,1494,1500,1487,1501,1500,1488,3221225997,132,
 2147483912,2147483926,2147483920,2147483919,2147483792,2147483779,3221226214,3221226213,1073743314,786,0,0,0,0,0,0,0,0,0,0,0,0,2147484434,1073743314,1073742565,1073742566,2147483780,2147483915,2147483925,2147483915,199,264,
@@ -193,4 +254,52 @@
 2147483794,525,1073743319,1073743321,2147484134,2147484133,2147484712,2147484711,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1063,1064,485,486,1073743314,1073743316,2147484173,146
 </data>
  </layer>
+ <objectgroup id="5" name="boss_map_objects">
+  <object id="1" type="colisor" x="483.5" y="-0.5" width="28" height="705.5"/>
+  <object id="2" type="colisor" x="0.333333" y="-0.333333" width="32" height="705.333"/>
+  <object id="3" name="floor" type="colisor" x="33" y="672" width="79.3333" height="16.6667"/>
+  <object id="4" type="colisor" x="33" y="689" width="44.6667" height="14.3333"/>
+  <object id="5" name="floor" type="colisor" x="401.333" y="672.333" width="82" height="15.6667"/>
+  <object id="6" type="colisor" x="433.333" y="689" width="50" height="11"/>
+  <object id="9" name="floor" type="colisor" x="401.333" y="543.667" width="81.6667" height="17"/>
+  <object id="11" type="colisor" x="464.667" y="576.333" width="18.3333" height="16"/>
+  <object id="13" type="colisor" x="434" y="561" width="49.3333" height="14.6667"/>
+  <object id="15" name="floor" type="colisor" x="402" y="449" width="81.6667" height="17"/>
+  <object id="16" type="colisor" x="465.334" y="481.666" width="18.3333" height="16"/>
+  <object id="17" type="colisor" x="434.667" y="466.333" width="49.3333" height="14.6667"/>
+  <object id="24" name="floor" type="colisor" x="401.666" y="352.334" width="81.6667" height="17"/>
+  <object id="25" type="colisor" x="465" y="385" width="18.3333" height="16"/>
+  <object id="26" type="colisor" x="434.333" y="369.667" width="49.3333" height="14.6667"/>
+  <object id="27" name="floor" type="colisor" x="402.333" y="256.333" width="81.6667" height="17"/>
+  <object id="28" type="colisor" x="465.667" y="288.999" width="18.3333" height="16"/>
+  <object id="29" type="colisor" x="435" y="273.666" width="49.3333" height="14.6667"/>
+  <object id="30" name="floor" type="colisor" x="401.667" y="159.334" width="81.6667" height="17"/>
+  <object id="31" type="colisor" x="465.001" y="192" width="18.3333" height="16"/>
+  <object id="32" type="colisor" x="434.334" y="176.667" width="49.3333" height="14.6667"/>
+  <object id="33" name="floor" type="colisor" x="32.5001" y="543.5" width="81.6667" height="17"/>
+  <object id="34" type="colisor" x="32.4995" y="576.166" width="18.3333" height="16"/>
+  <object id="35" type="colisor" x="32.1665" y="560.833" width="49.3333" height="14.6667"/>
+  <object id="36" name="floor" type="colisor" x="31.8331" y="448.833" width="81.6667" height="17"/>
+  <object id="37" type="colisor" x="31.8325" y="481.499" width="18.3333" height="16"/>
+  <object id="38" type="colisor" x="31.4995" y="466.166" width="49.3333" height="14.6667"/>
+  <object id="39" name="floor" type="colisor" x="32.1671" y="352.167" width="81.6667" height="17"/>
+  <object id="40" type="colisor" x="32.1665" y="384.833" width="18.3333" height="16"/>
+  <object id="41" type="colisor" x="31.8335" y="369.5" width="49.3333" height="14.6667"/>
+  <object id="42" name="floor" type="colisor" x="31.5001" y="256.166" width="81.6667" height="17"/>
+  <object id="43" type="colisor" x="31.4995" y="288.832" width="18.3333" height="16"/>
+  <object id="44" type="colisor" x="31.1665" y="273.499" width="49.3333" height="14.6667"/>
+  <object id="45" name="floor" type="colisor" x="32.1661" y="159.167" width="81.6667" height="17"/>
+  <object id="46" type="colisor" x="32.1655" y="191.833" width="18.3333" height="16"/>
+  <object id="47" type="colisor" x="31.8325" y="176.5" width="49.3333" height="14.6667"/>
+  <object id="48" name="floor" type="colisor" x="31.5455" y="0.666667" width="127.788" height="30"/>
+  <object id="54" type="colisor" x="75.2727" y="30.9091" width="37.0909" height="16.9091"/>
+  <object id="55" type="colisor" x="63.2727" y="48" width="32.9091" height="17.2727"/>
+  <object id="56" type="colisor" x="31.8182" y="65.4545" width="43.6364" height="14.1818"/>
+  <object id="60" type="colisor" x="31.6364" y="80" width="24.7273" height="10.9091"/>
+  <object id="61" name="floor" type="colisor" x="354.659" y="0.93185" width="128.083" height="30"/>
+  <object id="62" type="colisor" x="403.379" y="31.1743" width="37.0909" height="16.9091"/>
+  <object id="63" type="colisor" x="419.56" y="48.2652" width="32.9091" height="17.2727"/>
+  <object id="64" type="colisor" x="440.288" y="65.7197" width="43.6364" height="14.1818"/>
+  <object id="65" type="colisor" x="459.136" y="80.0455" width="24.7273" height="10.9091"/>
+ </objectgroup>
 </map>
