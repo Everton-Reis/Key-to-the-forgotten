@@ -1,6 +1,7 @@
 import pygame
 import sys
 import math
+from gamesettings import *
 
 import enemy as liben
 
@@ -53,7 +54,7 @@ class Bullet:
 
 	def move(self):
 		if self.shooted == False:
-			return
+			return 
 
 		self.rect.x += self.direction_x
 		self.rect.y += self.direction_y
@@ -72,6 +73,9 @@ class Bullets():
 				bullet.load(screen)
 				bullet.move()
 				bullet.platform_collide(platforms)
+
+				if bullet.rect.y > SCREEN_SIZE[1] or bullet.rect.y < 0:
+					bullet.shooted = False
 
 				if isinstance(shooter, liben.BaseEnemy):
 					bullet.take_damage(objects)

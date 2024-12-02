@@ -42,6 +42,9 @@ class LifeBar(pygame.sprite.Sprite):
 			self.target_health = self.max_health
 	
 	def update(self):
+		self.max_health = self.player.MAX_HEALTH
+		self.health_ratio = self.max_health / self.health_bar_length
+
 		self.target_health = min(self.player.health, self.max_health)
 		self.life_bar_health()
 

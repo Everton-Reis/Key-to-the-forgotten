@@ -13,6 +13,16 @@ from gamesettings import *
 class Player:
 
 	def __init__(self, x, y):
+		"""
+		Inicializa um objeto da classe Player.
+
+		Parâmetros
+		----------
+		x : float
+			posição horizontal
+		y : float
+			posição vertical
+		"""
 		self.idle_sprites = sprites.cut_sheet(PLAYER_IDLE_SPRITE, 4, 1, 2)
 		self.run_sprites = sprites.cut_sheet(PLAYER_RUN_SPRITE, 6, 1 ,2)
 		self.rect = self.idle_sprites[0].get_rect()
@@ -36,11 +46,11 @@ class Player:
 		self.attack_channel = pygame.mixer.Channel(3)
 
 		self.death_sfx = pygame.mixer.Sound(PLAYER_DEATH_SFX)
-		self.death_sfx.set_volume(0.5)
+		self.death_sfx.set_volume(0.7)
 		self.death_channel = pygame.mixer.Channel(4)
 
 		self.get_sfx = pygame.mixer.Sound(PLAYER_GET_SFX)
-		self.get_sfx.set_volume(0.6)
+		self.get_sfx.set_volume(0.4)
 		self.get_channel = pygame.mixer.Channel(5)
 
 		self.idle_time = 0
@@ -89,11 +99,27 @@ class Player:
 		self.weapon_image = PLAYER_WEAPON_SPRITE
 		self.weapon.create_weapon()
 
-	def calc_next_level(self, total):
+	def calc_next_level(self, total) -> float:
+		"""
+		Cálcula o xp necessário para o próximo nível baseado na razão de level up.
+
+		Parâmetros
+		----------
+		total: float
+			Níveis upados.
+		"""
 		for _ in range(total):
 			self.next_level += PLAYER_LEVEL_MULTIPLIER*self.next_level
 
-	def calc_exp(self, level):
+	def calc_exp(self, level) -> float:
+		"""
+		Cálculo o xp associado ao nível desejado.
+
+		Parâmetros
+		----------
+		level: int
+			Nível desejado.
+		"""
 		if level == 0:
 			return 0
 		if level == 1:
@@ -103,6 +129,9 @@ class Player:
 		return exp * ((PLAYER_LEVEL_MULTIPLIER + 1) ** (level - 2))
 
 	def level_up(self):
+		"""
+		Upa de nível.
+		"""
 		if not self.alive:
 			return
 
@@ -111,11 +140,19 @@ class Player:
 			self.ant_level = self.level
 			self.level += total
 			self.calc_next_level(total)
+			self.MAX_HEALTH += 0.1 * self.MAX_HEALTH
 			self.health = self.MAX_HEALTH
 			self.level_sfx.play()
 			return True
 
-	def draw_status(self, screen):
+	def draw_status(self, screen) -> None:
+		"""
+		Desenha na tela os status do player.
+
+		Parâmetros
+		----------
+		screen : tela de pygame
+		"""
 		damage_text = f"Dano : {self.damage:.2f}"
 		health_text = f"Vida máxima : {self.MAX_HEALTH:.2f}"
 		h_text = f"Vida : {self.health:.2f}"
@@ -153,6 +190,14 @@ class Player:
 		screen.blit(next_level_surface, (10, 700))
 
 	def life_steal(self, enemy):
+		"""
+		Aplica roubo de vida.
+
+		Parâmetros
+		----------
+		enemy : objeto inimigo
+			Inimigo a ter a vida roubada.
+		"""
 		if enemy.health > 0 and self.health < self.MAX_HEALTH:
 			delta = self.health + self.ls * 0.5*self.damage
 			if delta >= self.MAX_HEALTH:
@@ -161,7 +206,19 @@ class Player:
 				self.health = delta
 
 
-	def draw(self, screen, delta, mouse = None):
+	def draw(self, screen, delta, mouse = None) -> None:
+		"""
+		Responsável por desenhar e carregar sprites.
+
+		Parâmetros
+		----------
+		screen: tela de pygame
+
+		delta: int
+			Intervalo de tempo do jogo.
+
+		mouse: mouse de pygame
+		"""
 		if not self.alive:
 			return
 
@@ -172,7 +229,18 @@ class Player:
 		if self.weapon_image and mouse:
 			self.weapon.point_mouse(mouse, screen)
 
-	def collide(self, plataforms, enemies):
+	def collide(self, plataforms, enemies) -> None:
+		"""
+		Responsável pela lógica de colisão entre objetos.
+
+		Parâmetros
+		----------
+		plataforms: list(retângulo de pygame)
+			Lista contendo as plataformas colidíveis do jogo.
+
+		enemies: list(objeto inimigo)
+			Lista contendo os inimigos colidíveis do jogo.
+		"""
 
 		if not self.rect:
 			return
@@ -293,12 +361,23 @@ class Player:
 					if self.dx < 0:
 						self.rect.left = enemy.rect.right
 
-	def update(self, plataforms, enemies):
+	def update(self, plataforms, enemies) -> None:
+		"""
+		Responsável por aplicar a gravidade, chamar collide() e matar o jogador.
+
+		Parâmetros
+		----------
+		plataforms: list(retângulo de pygame)
+			Lista contendo as plataformas colidíveis do jogo.
+
+		enemies: list(objeto inimigo)
+			Lista contendo os inimigos colidíveis do jogo.
+		"""
 		if not self.alive:
 			self.health = 0
 
-			if self.run_channel.get_busy():
-				self.run_channel.stop()
+			# if self.run_channel.get_busy():
+			# 	self.run_channel.stop()
 
 			return
 
@@ -311,7 +390,14 @@ class Player:
 		self.dx = 0
 		self.dy = 0
 
-	def _dash(self, mouse):
+	def _dash(self, mouse) -> None:
+		"""
+		Aplica dash ao jogador.
+
+		Parâmetros
+		----------
+		mouse: mouse de pygame
+		"""
 		if self.dash <= 0 or self.dash_count >= self.dash:
 			return
 
@@ -335,14 +421,21 @@ class Player:
 		self.dash_count += 1
 
 
-	def on_event(self, event: pygame.event.Event, mouse):
+	def on_event(self, event: pygame.event.Event, mouse) -> None:
+		"""
+		Responsável por chamar funções a medida que eventos acontecem no jogo.
+
+		Parâmetros:
+		event: evento de pygame
+
+		mouse: mouse de pygame
+		"""
 		if not self.alive:
 			return
 
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_SPACE:
 				self._jump()
-				self.jump_channel.play(self.jump_sfx)
 		
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if event.button == 1:
@@ -350,8 +443,7 @@ class Player:
 				
 				bullet = libat.Bullet((self.rect.x + (self.rect.width // 2), self.rect.y + (self.rect.height // 2)), 
 									  (mouse.get_pos()[0], mouse.get_pos()[1]),
-									  self.damage,
-									  (10, 10, 10), PLAYER_BULLET_SPRITE)
+									  self.damage, PLAYER_BULLET_SPRITE)
 				bullet.shooted = True
 				self.bullets.bullets.append(bullet)
 
@@ -361,21 +453,31 @@ class Player:
 					for i in range(self.shoot):
 						extra_bullet = libat.Bullet((self.rect.x + (self.rect.width // 2), self.rect.y + (self.rect.height //2)),
 										(mouse.get_pos()[0] + (i+1) * distance, mouse.get_pos()[1]),
-										self.damage // self.shoot,
-										(10, 10, 10), PLAYER_BULLET_SPRITE)
+										self.damage // self.shoot, PLAYER_BULLET_SPRITE)
 						extra_bullet.shooted = True
 						self.bullets.bullets.append(extra_bullet)
 
 			if event.button == 3:
 				self._dash(mouse)
 		
-	def _jump(self):
+	def _jump(self) -> None:
+		"""
+		Aplica pulo ao jogador.
+		"""
 		if self.jump_count >= self.jump_count_max:
 			return
+		self.jump_channel.play(self.jump_sfx)
 		self.speed_y = -10
 		self.jump_count += 1
 
-	def on_key_pressed(self, key_map):
+	def on_key_pressed(self, key_map) -> None:
+		"""
+		Responsável por fazer o player se mover.
+
+		Parâmetros
+		----------
+		key_map: list(key de pygame)
+		"""
 		if not self.alive:
 			return
 
@@ -386,17 +488,36 @@ class Player:
 			self.dx = - self.speed_x
 			self.direction = 1
 
-	def decrement_health(self, howmuch):
+	def decrement_health(self, howmuch) -> None:
+		"""
+		Reduz a vida do jogador.
+
+		Parâmetros
+		----------
+		howmuch: float
+			Quanto a se retirar da vida atual do jogador.
+		"""
 		self.health -= howmuch
 		self.get_channel.play(self.get_sfx)
 		self.die()
 
-	def increment_health(self, howmuch):
+	def increment_health(self, howmuch) -> None:
+		"""
+		Aumenta a vida do jogador.
+
+		Parâmetros
+		----------
+		howmuch: float
+			Quanto a se aumentar da vida atual do jogador.
+		"""
 		self.health += howmuch
 		if self.health >= self.MAX_HEALTH:
 			self.health = self.MAX_HEALTH
 
-	def die(self):
+	def die(self) -> None:
+		"""
+		Mata o jogador.
+		"""
 		if self.health <= 0:
 			self.rect = None
 			self.alive = False

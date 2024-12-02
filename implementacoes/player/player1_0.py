@@ -117,7 +117,7 @@ class Player:
 				bullet = libat.Bullet((self.rect.x + (self.width // 2), self.rect.y + (self.height // 2)), 
 									  (mouse.get_pos()[0], mouse.get_pos()[1]),
 									  5,
-									  (10, 10, 10), '../../sprites/1.png')
+									  (10, 10, 10), '../../sprites/player/bullet.png')
 				bullet.shooted = True
 				self.bullets.bullets.append(bullet)
 	

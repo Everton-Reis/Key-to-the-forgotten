@@ -194,10 +194,11 @@ class Map:
 	def move_map(self, plataforms):
 		if self.game_ended:
 			for index, plataform in enumerate(plataforms):
-				plataform.y += self.block_speed
-
 				if plataforms[0].y >= SCREEN_SIZE[1] + 100:
 					break
+
+				plataform.y += self.block_speed
+
 
 			return True
 

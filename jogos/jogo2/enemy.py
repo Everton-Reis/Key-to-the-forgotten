@@ -17,6 +17,16 @@ import player
 class BaseEnemy(ABC):
 
 	def __init__(self, x, y):
+		"""
+		Inicializa um objeto da classe BaseEnemy.
+
+		Parâmetros
+		----------
+		x : float
+			posição horizontal
+		y : float
+			posição vertical
+		"""
 		self.delta = DELTA_GAME
 		self.health = 10
 		self.speed = 0
@@ -24,6 +34,13 @@ class BaseEnemy(ABC):
 		self.alive = True
 		self.killed_by_player = False
 		self.xp = 0
+
+		self.get_sfx = pygame.mixer.Sound(ENEMY_GET_SFX)
+		self.get_sfx.set_volume(0.6)
+		self.get_channel = pygame.mixer.Channel(6)
+
+		self.death_sfx = None
+		self.death_channel = pygame.mixer.Channel(7)
 
 		self.death_time = 0
 		self.attack_time = 0
@@ -43,38 +60,99 @@ class BaseEnemy(ABC):
 		self.dx = 0
 		self.dy = 0
 
-	def invert_direction(self):
+	def invert_direction(self) -> None:
+		"""
+		Inverte a direção do inimigo.
+		"""
 		if self.direction == 0: #direita
 			self.direction = 1
 		elif self.direction == 1: #esquerda
 			self.direction = 0
 
 
-	def change_direction(self):
+	def change_direction(self) -> None:
+		"""
+		Alterar a direção do inimigo
+		"""
 		self.direction = random.choice((0, 1))
 
 
-	def collide(self, plataforms, player, enemies, screen):
+	def collide(self, plataforms, player, enemies, screen) -> None:
+		"""
+		Responsável pela lógica de colisão entre objetos.
+
+		Parâmetros
+		----------
+		plataforms: list(retângulo de pygame)
+			Lista contendo as plataformas colidíveis do jogo.
+
+		player: objeto de player
+			Player colidível.
+
+		enemies: list(objeto inimigo)
+			Lista contendo os inimigos colidíveis do jogo.
+
+		screen: tela de pygame
+		"""
 		pass
 
-	def update(self, plataforms, player, enemies, screen):
+	def update(self, plataforms, player, enemies, screen) -> None:
+		"""
+		Responsável por aplicar a gravidade, chamar collide() e matar o inimigo.
+
+		Parâmetros
+		----------
+		plataforms: list(retângulo de pygame)
+			Lista contendo as plataformas colidíveis do jogo.
+
+		player: objeto de player
+			Player colidível
+
+		enemies: list(objeto inimigo)
+			Lista contendo os inimigos colidíveis do jogo.
+
+		screen: tela de pygame
+		"""
 		pass
 
 
 	@abstractmethod
-	def load(self, screen):
+	def load(self, screen) -> None:
+		"""
+		Responsável por desenhar e carregar sprites.
+
+		Parâmetros
+		----------
+		screen: tela de pygame
+		"""
 		pass
 
 
-	def decrement_health(self, howmuch):
+	def decrement_health(self, howmuch) -> None:
+		"""
+		Reduz a vida do inimigo.
+
+		Parâmetros
+		----------
+		howmuch: float
+			Quanto a se retirar da vida atual do inimigo.
+		"""
 		self.health -= howmuch
+		self.get_channel.play(self.get_sfx)
 		self.die()
 
 
 	def die(self):
+		"""
+		Mata o inimigo.
+		"""
 		if self.health <= 0:
 			self.killed_by_player = True
 			self.alive = False
+
+			if self.death_sfx:
+				self.death_channel.play(self.death_sfx)
+
 
 			if self.death_time == 0:
 				self.death_time += 1
@@ -87,17 +165,47 @@ class BaseEnemy(ABC):
 				self.death_time += 1
 
 	@abstractmethod
-	def attack(self, player, screen):
+	def attack(self, player, screen) -> None:
+		"""
+		Responsável pela lógica de ataque do inimigo.
+
+		Parâmetros
+		----------
+		player: objeto de player
+
+		screen: tela de pygame
+		"""
 		pass
 
-	def roam(self):
+	def roam(self) -> None:
+		"""
+		Responsável pela lógica de roaming do inimigo.
+		"""
 		pass
 
-	def chase(self, player):
+	def chase(self, player) -> None:
+		"""
+		Responsável pela lógica de chasing do inimigo
+
+		Parâmetros
+		----------
+		player: objeto de player
+		"""
 		pass
 
 
-	def can_see_player(self, playerpos, plataforms):
+	def can_see_player(self, playerpos, plataforms) -> bool:
+		"""
+		Responsável pela lógica de fov e detecção do inimigo.
+
+		Parâmetros
+		----------
+		playerpos: tuple/list(float,float)
+			Posição do player.
+
+		plataforms: list(retângulo de pygame)
+			Plataformas do jogo.
+		"""
 		dx = playerpos[0] - self.rect.center[0]
 		dy = playerpos[1] - self.rect.center[1]
 		distance = math.hypot(dx, dy)
@@ -113,6 +221,16 @@ class BaseEnemy(ABC):
 
 class MovingEnemy(BaseEnemy):
 	def __init__(self, x, y):
+		"""
+		Inicializa um objeto da classe MovingEnemy.
+
+		Parâmetros
+		----------
+		x : float
+			posição horizontal
+		y : float
+			posição vertical
+		"""
 		super().__init__(x,y)
 		self.tomove = random.randint(10,50)
 		self.max_tomove = self.tomove
@@ -135,7 +253,16 @@ class MovingEnemy(BaseEnemy):
 		elif self.attack_time > 0:
 			sprites.load_sprites_enemy_attack(self, self.delta, screen)
 
-	def chase(self, player):
+	def chase(self, player) -> None:
+		"""
+		Persegue o player caso esteja o vendo.
+		Vai na última direção em que viu o player caso não esteja o vendo.
+		Começa roaming caso nenhuma das duas condições seja verdadeira.
+
+		Parâmetros
+		----------
+		player: objeto de player
+		"""
 		if self.seeingplayer:
 			dx = self.rect.x - player.rect.x
 
@@ -244,7 +371,10 @@ class MovingEnemy(BaseEnemy):
 		self.dy = 0
 
 
-	def move(self, time = None):
+	def move(self):
+		"""
+		Responsável por mover o inimigo.
+		"""
 		if self.tomove == 0:
 			return
 
@@ -257,7 +387,10 @@ class MovingEnemy(BaseEnemy):
 		self.tomove -= self.speed
 
 
-	def roam(self):
+	def roam(self) -> None:
+		"""
+		Altera aleatoriamente a direção do inimigo e faz com que ele ande uma distância aleatória.
+		"""
 		if self.seeingplayer == True or self.roaming == False:
 			return
 
@@ -288,11 +421,24 @@ class MovingEnemy(BaseEnemy):
 class WeakMovingEnemy(MovingEnemy):
 
 	def __init__(self, x,y):
+		"""
+		Inicializa um objeto da classe WeakMovingEnemy.
+
+		Parâmetros
+		----------
+		x : float
+			posição horizontal
+		y : float
+			posição vertical
+		"""
 		super().__init__(x, y)
 		self.idle_sprites = sprites.cut_sheet(WEAKMOV_IDLE_SPRITE, 7, 1, 1.5)
 		self.attack_sprites = sprites.cut_sheet(WEAKMOV_ATTACK_SPRITE, 7, 1, 1.5)
 		self.death_sprites = sprites.cut_sheet(WEAKMOV_DEATH_SPRITE, 3, 1, 1.5)
 		self.walk_sprites = sprites.cut_sheet(WEAKMOV_WALK_SPRITE, 8, 1, 1.5)
+
+		self.death_sfx = pygame.mixer.Sound(WEAKENEMY_DEATH_SFX)
+		self.death_sfx.set_volume(0.6)
 
 		self.idle_x_0 = 0.8
 		self.idle_y_0 = 0.9
@@ -341,11 +487,24 @@ class WeakMovingEnemy(MovingEnemy):
 class StrongMovingEnemy(MovingEnemy):
 
 	def __init__(self, x,y):
+		"""
+		Inicializa um objeto da classe StrongMovingEnemy.
+
+		Parâmetros
+		----------
+		x : float
+			posição horizontal
+		y : float
+			posição vertical
+		"""
 		super().__init__(x,y)
 		self.idle_sprites = sprites.cut_sheet(STRMOV_IDLE_SPRITE, 5, 1, 1.5)
 		self.attack_sprites = sprites.cut_sheet(STRMOV_ATTACK_SPRITE, 6, 1, 1.5)
 		self.death_sprites = sprites.cut_sheet(STRMOV_DEATH_SPRITE, 2, 1, 1.5)
 		self.walk_sprites = sprites.cut_sheet(STRMOV_WALK_SPRITE, 9, 1, 1.5)
+
+		self.death_sfx = pygame.mixer.Sound(STRENEMY_DEATH_SFX)
+		self.death_sfx.set_volume(0.6)
 
 		self.idle_x_0 = 0.75
 		self.idle_y_0 = 1.25
@@ -392,12 +551,25 @@ class StrongMovingEnemy(MovingEnemy):
 class ShootingEnemy(BaseEnemy):
 
 	def __init__(self, x,y):
+		"""
+		Inicializa um objeto da classe ShootingEnemy.
+
+		Parâmetros
+		----------
+		x : float
+			posição horizontal
+		y : float
+			posição vertical
+		"""
 		super().__init__(x,y)
 		self.idle_sprites = sprites.cut_sheet(SHOOT_ENEMIES_IDLE_SPRITE, 6, 1, 1.5)
 		self.attack_sprites = sprites.cut_sheet(SHOOT_ENEMIES_ATTACK_SPRITE, 8, 1, 1.5)
 		self.death_sprites = sprites.cut_sheet(SHOOT_ENEMIES_DEATH_SPRITE, 5, 1, 1.5)
 		self.rect = sprites.cut_transparent_rect(self.idle_sprites[0])
 		self.rect.center = (x, y)
+
+		self.death_sfx = pygame.mixer.Sound(SHOOTENEMY_DEATH_SFX)
+		self.death_sfx.set_volume(0.6)
 
 		self.idle_x_0 = 2
 		self.idle_y_0 = 1.2
@@ -432,6 +604,9 @@ class ShootingEnemy(BaseEnemy):
 		self.xp = SHOOT_XP
 
 	def roam(self):
+		"""
+		Altera aleatoriamente a direção do inimigo e faz com que ele ande uma distância aleatória.
+		"""
 		if self.seeingplayer == True or self.roaming == False:
 			return
 
@@ -478,6 +653,15 @@ class ShootingEnemy(BaseEnemy):
 
 
 	def chase(self, player):
+		"""
+		Persegue o player caso esteja o vendo.
+		Vai na última direção em que viu o player caso não esteja o vendo.
+		Começa roaming caso nenhuma das duas condições seja verdadeira.
+
+		Parâmetros
+		----------
+		player: objeto de player
+		"""
 		if self.seeingplayer:
 			dx = self.rect.x - player.rect.x
 
@@ -520,6 +704,15 @@ class ShootingEnemy(BaseEnemy):
 
 
 	def attack(self, player, screen):
+		"""
+		Cria um projétil a partir de self com destino ao player.
+
+		Parâmetros
+		----------
+		player: objeto de player
+
+		screen: tela de pygame
+		"""
 		if self.alive == False or \
 		 self.roaming == True or \
 		 self.seeingplayer == False or \
@@ -530,7 +723,7 @@ class ShootingEnemy(BaseEnemy):
 		bullet = libat.Bullet((self.rect.center[0], self.rect.center[1]),
 					(player.rect.center[0],
 					 player.rect.center[1] + player.rect.height // 2),
-						self.damage, (0,255,100), SHOOT_ENEMIES_BULLET_SPRITE)
+						self.damage, SHOOT_ENEMIES_BULLET_SPRITE)
 		bullet.shooted = True
 		self.attack_time += 1
 
@@ -538,6 +731,16 @@ class ShootingEnemy(BaseEnemy):
 
 class BossShootingEnemy(BaseEnemy):
 	def __init__(self, x,y):
+		"""
+		Inicializa um objeto da classe BossShootingEnemy.
+
+		Parâmetros
+		----------
+		x : float
+			posição horizontal
+		y : float
+			posição vertical
+		"""
 		super().__init__(x,y)
 		self.idle_sprites = sprites.cut_sheet(BOSS_SHOOT_IDLE, 6, 1, 1.5)
 		self.attack_sprites = sprites.cut_sheet(BOSS_SHOOT_SHOT, 8, 1, 1.5)
@@ -593,6 +796,13 @@ class BossShootingEnemy(BaseEnemy):
 			sprites.load_sprites_enemy_attack(self, self.delta, screen)
 
 	def attack(self, player, screen):
+		"""
+		Cria um projétil a partir de self com destino ao player.
+
+		Parâmetros
+		----------
+		player: objeto de player
+		"""
 		if not self.alive:
 			return
 
@@ -609,12 +819,29 @@ class BossShootingEnemy(BaseEnemy):
 		self.attack_time += 1
 		self.bullets.bullets.append(bullet)
 
-	def move(self, time):
+	def move(self, time) -> None:
+		"""
+		Move o inimigo.
+
+		Parâmetros
+		----------
+		time: tempo de pygame
+		"""
 		self.rect.y += self.max_offset*math.sin(time.get_ticks() / 500)
 		self.die()
 
 class Boss(BaseEnemy):
 	def __init__(self, x, y):
+		"""
+		Inicializa um objeto da classe Boss.
+
+		Parâmetros
+		----------
+		x : float
+			posição horizontal
+		y : float
+			posição vertical
+		"""
 		super().__init__(x,y)
 		self.idle_sprites = sprites.cut_sheet(BOSS_IDLE_SPRITE, 2, 2, 1)
 		self.attack_sprites = sprites.cut_sheet(BOSS_ATTACK2_SPRITE, 2, 2, 2.5)
@@ -623,6 +850,14 @@ class Boss(BaseEnemy):
 		self.rect = sprites.cut_transparent_rect(self.idle_sprites[0])
 		self.rect.center = (x, y)
 		self.direction = 0
+
+		self.death_sfx = pygame.mixer.Sound(BOSS_DEATH_SFX)
+		self.death_sfx.set_volume(0.6)
+
+		self.birth_sfx = pygame.mixer.Sound(BOSS_BIRTH_SFX)
+		self.birth_sfx.set_volume(0.6)
+		self.birth_channel = pygame.mixer.Channel(8)
+
 
 		self.idle_x_0 = 0.03
 		self.idle_y_0 = 0.03
@@ -673,6 +908,13 @@ class Boss(BaseEnemy):
 		self.enemies = list()
 
 	def move(self, time):
+		"""
+		Move o inimigo.
+
+		Parâmetros
+		----------
+		time: tempo de pygame
+		"""
 		if not self.alive:
 			return
 
@@ -688,8 +930,13 @@ class Boss(BaseEnemy):
 			return
 
 		if self.birth_time > 0:
+			if not self.birth_channel.get_busy():
+				self.birth_channel.play(self.birth_sfx, loops = -1)
+
 			sprites.load_sprites_boss_birth(self, self.delta, screen)
 			return
+
+		self.birth_channel.stop()
 
 		# pygame.draw.rect(screen, self.color, self.rect)
 		if self.idle_time >= 0  and self.attack2_count == 0 and self.attack_time == 0:
@@ -698,7 +945,18 @@ class Boss(BaseEnemy):
 			sprites.load_sprites_enemy_attack(self, self.delta, screen)
 
 
-	def attack(self, player, screen):
+	def attack(self, player, screen) -> None:
+		"""
+		Lógica de ataque do boss.
+		Cada ataque (1,2,3) tem certa probabilidade de acontecer.
+		Caso o 2° ataque esteja acontecendo, nenhum outro ataque vai acontecer.
+
+		Parâmetros
+		----------
+		player: objeto de player
+
+		screen: tela de pygame
+		"""
 		if not player.alive or not self.alive or self.birth_time > 0:
 			self.attack_time = 0
 			self.attack_current_sprite = 0
@@ -726,7 +984,14 @@ class Boss(BaseEnemy):
 			self.attack3()
 
 
-	def attack1(self, player):
+	def attack1(self, player) -> None:
+		"""
+		Cria um projétil a partir de self com destino ao player.
+
+		Parâmetros
+		----------
+		player: objeto de player
+		"""
 		dx = self.rect.center[0] - player.rect.center[0]
 		if dx > 0:
 			self.direction = 1
@@ -740,8 +1005,10 @@ class Boss(BaseEnemy):
 		self.bullets.bullets.append(bullet)
 
 
-	def attack2(self):
-		#ataque circular
+	def attack2(self) -> None:
+		"""
+		Cria projéteis a partir de self com destinos tais que os projéteis formem um circulo.
+		"""
 		self.direction = 0
 		number = BOSS_ATTACK2_PROJECTS # != 0
 		radius = 50
@@ -771,7 +1038,10 @@ class Boss(BaseEnemy):
 			self.attack2_times = random.randint(5,10)
 
 
-	def attack3(self):
+	def attack3(self) -> None:
+		"""
+		Cria inimigos a partir de self de tal forma que os inimigos fiquem posicionados num polígono regular.
+		"""
 		number = random.randint(3,6)
 		radius = 200
 
@@ -785,7 +1055,14 @@ class Boss(BaseEnemy):
 
 		self.attack3_isrunning = True
 
-	def update(self, time):
+	def update(self, time) -> None:
+		"""
+		Move os inimigos.
+
+		Parâmetros
+		----------
+		time: tempo de pygame
+		"""
 		self.move(time)
 
 		if len(self.enemies) > 0:
@@ -794,19 +1071,52 @@ class Boss(BaseEnemy):
 
 class Key:
 	def __init__(self, image_path, position=(0, 0)):
+		"""
+		Inicializa objeto da classe Key
+
+		Parâmetros
+		----------
+		image_path: str
+			Caminho contendo sprite.
+
+		position: tuple(float, float)
+			Posição da key.
+		"""
 		self.image = pygame.image.load(image_path).convert_alpha()
 		self.rect = self.image.get_rect(center=position)
 		self.visible = False  # A chave será visível somente quando ativada
 
-	def activate(self, position):
+	def activate(self, position) -> None:
+		"""
+		Torna a key visível em uma nova posição
+
+		Parâmetros
+		----------
+		position: tuple(float, float)
+			Nova posição.
+		"""
 		self.rect.center = position
 		self.visible = True
 
 	def load(self, screen):
+		"""
+		Desenha a chave.
+
+		Parâmetros
+		----------
+		screen: tela de pygame
+		"""
 		if self.visible:
 			screen.blit(self.image, self.rect)
 
 	def check_collision(self, player):
+		"""
+		Lógica de colisão entre player-key.
+
+		Parâmetros
+		----------
+		player: objeto de player
+		"""
 		if self.visible and self.rect.colliderect(player.rect):
 			self.visible = False
 			return True
@@ -815,6 +1125,9 @@ class Key:
 class Enemies():
 
 	def __init__(self):
+		"""
+		Inicializa objeto de classe Enemies
+		"""
 		self.mov_enemies = list()
 		self.shoot_enemies = list()
 		self.enemies = list()
@@ -823,7 +1136,18 @@ class Enemies():
 		self.last_enemy = None
 
 
-	def find_random_positions(self, plataforms, number):
+	def find_random_positions(self, plataforms, number) -> list([tuple()]):
+		"""
+		Dentro de posições possíveis, escolhe aleatoriamente entre elas uma certa quantidade de vezes.
+
+		Parâmetros
+		----------
+		plataforms: list(retângulo de pygames)
+			Possíveis retângulos.
+
+		number: int
+			Quantidade de vezes.
+		"""
 		if len(plataforms) == 0:
 			return
 
@@ -843,7 +1167,19 @@ class Enemies():
 		return positions
 
 
-	def create_random_enemies(self, plataforms, floor):
+	def create_random_enemies(self, plataforms, floor) -> None:
+		"""
+		Cria inimigos aleatoriamente de acordo com as posições passadas.
+		Aumenta status dos inimigos criados de acordo com o andar atual.
+
+		Parâmetros
+		----------
+		plataforms: list(retângulo de pygame)
+			Plataformas possíveis.
+
+		floor: int
+			Andar do jogo.
+		"""
 		if len(plataforms) == 0:
 			return
 
@@ -869,7 +1205,23 @@ class Enemies():
 				self.shoot_enemies.append(choice)
 
 
-	def update(self, plataforms, player, enemies, time, screen):
+	def update(self, plataforms, player, enemies, time, screen) -> None:
+		"""
+		Responsável por aplicar update() de todos os itens de self.enemies.
+
+		Parâmetros
+		----------
+		plataforms: list(retângulo de pygame)
+			Plataformas do jogo
+
+		player: objeto de player
+
+		enemies: list(objeto de inimigo)
+
+		time: tempo de pygame
+
+		screen: tela de pygame
+		"""
 		self.enemies = self.mov_enemies + self.shoot_enemies
 
 		for enemy in self.enemies:
@@ -884,7 +1236,14 @@ class Enemies():
 
 
 
-	def load(self, screen):
+	def load(self, screen) -> None:
+		"""
+		Responsável por aplicar load() de cada item de self.enemies.
+
+		Parâmetros
+		----------
+		screen: tela de pygame
+		"""
 		self.enemies = self.mov_enemies + self.shoot_enemies
 
 		for enemy in self.enemies:
@@ -900,7 +1259,18 @@ class Enemies():
 		self.key.load(screen)
 
 
-	def mov_attack(self, player, plataforms, screen):
+	def mov_attack(self, player, plataforms, screen) -> None:
+		"""
+		Responsável por aplicar attack(), roam() e chase() de cada item de self.mov_enemies
+
+		Parâmetros
+		----------
+		player: objeto de player
+
+		plataforms: list(retângulo de pygame)
+
+		screen: tela de pygame
+		"""
 		if not player or not player.rect:
 			return
 
@@ -914,7 +1284,18 @@ class Enemies():
 			else:
 				enemy.chase(player)
 
-	def shoot_attack(self, player, plataforms, screen):
+	def shoot_attack(self, player, plataforms, screen) -> None:
+		"""
+		Responsável por aplicar attack(), roam() e chase() de cada item de inimigos que atiram.
+
+		Parâmetros
+		----------
+		player: objeto de player
+
+		plataforms: list(retângulo de pygame)
+
+		screen: tela de pygame
+		"""
 		if not player or not player.rect:
 			return
 
@@ -938,7 +1319,18 @@ class Enemies():
 
 
 
-	def shoot_bullets(self, player, plataforms, screen):
+	def shoot_bullets(self, player, plataforms, screen) -> None:
+		"""
+		Responsável por aplicar bullets.shoot() de cada item de inimigos que atiram.
+
+		Parâmetros
+		----------
+		player: objeto de player
+
+		plataforms: list(retângulo de pygame)
+
+		screen: tela de pygame
+		"""
 		for enemy in self.shoot_enemies:
 			enemy.bullets.shoot(screen, player, plataforms, enemy)
 
@@ -950,7 +1342,14 @@ class Enemies():
 					enemy.bullets.shoot(screen, player, plataforms, enemy)
 
 
-	def check_die(self, player):
+	def check_die(self, player) -> None:
+		"""
+		Responsável por remover inimigo morto das listas.
+
+		Parâmetros
+		----------
+		player: objeto de player
+		"""
 		self.enemies = self.mov_enemies + self.shoot_enemies
 
 		if len(self.enemies) > 0:

@@ -1,6 +1,17 @@
 import pygame
 
+"""
+Responsável por mexer com sprites.
+"""
+
 def cut_transparent_rect(image):
+	"""
+	Corta um retângulo a partir de uma imagem com fundo transparente.
+
+	Parâmetros
+	----------
+	image: sprite de pygame
+	"""
 	min_x, min_y = image.get_width(), image.get_height()
 	max_x, max_y = 0, 0
 
@@ -26,6 +37,20 @@ def cut_transparent_rect(image):
 	return pygame.Rect(min_x, min_y, max_x - min_x + 1, max_y - min_y + 1)
 
 def cut_sheet(image, hor_number, ver_number, scale_factor):
+	"""
+	Corta sprites de uma sheet de sprites a partir do número de sprites na horizontal e na vertical.
+
+	Parâmetros
+	----------
+	hor_number : int
+		Número de sprites na horizontal
+
+	ver_number: int
+		Número de sprites na vertical
+
+	scale_factor: float
+		Fator de escala
+	"""
 	sheet = pygame.image.load(image).convert_alpha()
 
 	width = sheet.get_size()[0] / hor_number
@@ -45,6 +70,18 @@ def cut_sheet(image, hor_number, ver_number, scale_factor):
 	return frames
 
 def load_sprites_player(object, delta, screen):
+	"""
+	Carrega sprites idle, death e run de player.
+
+	Parâmetros
+	----------
+	object: objeto de player
+
+	delta: int
+		Intervalo de tempo do jogo.
+
+	screen: tela de pygame
+	"""
 	frame = None
 	position = None
 
@@ -81,22 +118,20 @@ def load_sprites_player(object, delta, screen):
 
 	screen.blit(frame, position)
 
-def load_sprites_enemy_death(object, delta, screen):
-	object.death_time += delta
-
-	if object.death_time % 500 // object.death_frame_rate == 0:
-		object.death_current_sprite = (object.death_current_sprite + 1) % len(object.death_sprites)
-
-	frame = object.death_sprites[object.death_current_sprite]
-	position = (object.rect.x - object.rect.width * object.death_x, object.rect.y - object.rect.height*object.death_y)
-
-	if object.death_current_sprite == len(object.death_sprites) - 1:
-		object.death_time = 0
-		return
-
-	screen.blit(frame, position)
 
 def load_sprites_boss_death(object, delta, screen):
+	"""
+	Carrega sprites death de boss.
+
+	Parâmetros
+	----------
+	object: objeto de boss
+
+	delta: int
+		Intervalo de tempo do jogo.
+
+	screen: tela de pygame
+	"""
 	object.death_time += delta
 
 	if object.death_time % 500 // object.death_frame_rate == 0:
@@ -116,6 +151,18 @@ def load_sprites_boss_death(object, delta, screen):
 	screen.blit(frame, position)
 
 def load_sprites_boss_birth(object, delta, screen):
+	"""
+	Carrega sprites birth de boss.
+
+	Parâmetros
+	----------
+	object: objeto de boss
+
+	delta: int
+		Intervalo de tempo do jogo.
+
+	screen: tela de pygame
+	"""
 	object.birth_time += delta
 
 	if object.birth_time % 500 // object.birth_frame_rate == 0:
@@ -134,9 +181,47 @@ def load_sprites_boss_birth(object, delta, screen):
 
 	screen.blit(frame, position)
 
+def load_sprites_enemy_death(object, delta, screen):
+	"""
+	Carrega sprites death de inimigo.
+
+	Parâmetros
+	----------
+	object: objeto de inimigo
+
+	delta: int
+		Intervalo de tempo do jogo.
+
+	screen: tela de pygame
+	"""
+	object.death_time += delta
+
+	if object.death_time % 500 // object.death_frame_rate == 0:
+		object.death_current_sprite = (object.death_current_sprite + 1) % len(object.death_sprites)
+
+	frame = object.death_sprites[object.death_current_sprite]
+	position = (object.rect.x - object.rect.width * object.death_x, object.rect.y - object.rect.height*object.death_y)
+
+	if object.death_current_sprite == len(object.death_sprites) - 1:
+		object.death_time = 0
+		return
+
+	screen.blit(frame, position)
 
 
 def load_sprites_enemy_attack(object, delta, screen):
+	"""
+	Carrega sprites attack de inimigo.
+
+	Parâmetros
+	----------
+	object: objeto de inimigo
+
+	delta: int
+		Intervalo de tempo do jogo.
+
+	screen: tela de pygame
+	"""
 	object.attack_time += delta
 
 	if object.attack_time % 200 // object.attack_frame_rate == 0:
@@ -156,6 +241,18 @@ def load_sprites_enemy_attack(object, delta, screen):
 	screen.blit(frame, position)
 
 def load_sprites_enemy_walk(object, delta, screen):
+	"""
+	Carrega sprites walk de inimigo.
+
+	Parâmetros
+	----------
+	object: objeto de inimigo
+
+	delta: int
+		Intervalo de tempo do jogo.
+
+	screen: tela de pygame
+	"""
 	object.walk_time += delta
 
 	if object.walk_time > 1000 // object.walk_frame_rate:
@@ -173,6 +270,18 @@ def load_sprites_enemy_walk(object, delta, screen):
 
 
 def load_sprites_enemy_idle(object, delta, screen):
+	"""
+	Carrega sprites idle de inimigo.
+
+	Parâmetros
+	----------
+	object: objeto de inimigo
+
+	delta: int
+		Intervalo de tempo do jogo.
+
+	screen: tela de pygame
+	"""
 	object.idle_time += delta
 
 	if object.idle_time > 1000 // object.idle_frame_rate:

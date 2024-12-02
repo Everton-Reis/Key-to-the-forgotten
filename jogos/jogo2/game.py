@@ -33,7 +33,9 @@ class GameManager:
 		self.screen = pygame.display.set_mode(screen_size)
 		self.screen.fill((0, 0, 0))
 
+		pygame.mixer.set_num_channels(16)
 		self.background_music = BACKGROUND_MUSIC
+		self.background2_music = BACKGROUND2_MUSIC
 		self.death_music = pygame.mixer.Sound(DEATH_MUSIC)
 		self.death_played = False
 		self.death_channel = pygame.mixer.Channel(0)

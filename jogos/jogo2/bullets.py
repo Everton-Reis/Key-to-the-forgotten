@@ -1,18 +1,34 @@
 import pygame
 import sys
 import math
+from gamesettings import *
 
 import enemy as liben
 
 class Bullet:
 
-	def __init__(self, begin, destiny, damage, color, sprite_path):
+	def __init__(self, begin, destiny, damage, sprite_path):
+		"""
+		Inicializa objeto de classe Bullet.
+
+		Parâmetros
+		----------
+		begin: tuple(float, float)
+			Ponto de partida.
+
+		destiny: tuple(float, float)
+			Ponto de chegada.
+
+		damage: float
+
+		sprite_path: str
+			Caminho contendo sprite.
+		"""
 		self.speed = 10
 		self.shooted = False
 		self.damage = damage
 		self.begin = begin
 		self.destiny = destiny
-		self.color = color
 
 		self.image = pygame.image.load(sprite_path)
 		self.image = pygame.transform.scale(self.image, (10,10))
@@ -31,7 +47,16 @@ class Bullet:
 			self.direction_y = (dy / distance) * self.speed
 
 
-	def take_damage(self, object, player = None):
+	def take_damage(self, object, player = None) -> None:
+		"""
+		Aplica dano ao objeto.
+
+		Parâmetros
+		----------
+		object: objeto a receber dano.
+
+		player: objeto de player.
+		"""
 		if not object.rect or not object.alive:
 			return
 
@@ -42,18 +67,35 @@ class Bullet:
 			object.decrement_health(self.damage)
 			self.shooted = False
 
-	def platform_collide(self, platforms):
+	def platform_collide(self, platforms) -> None:
+		"""
+		Responsável pela colisão bullet-plataform.
+
+		Parâmetros
+		----------
+		platforms: list(retângulo de pygame)
+		"""
 		for platform in platforms:
 			if self.rect.colliderect(platform):
 				self.shooted = False
 
-	def load(self, screen):
+	def load(self, screen) -> None:
+		"""
+		Desenha a bullet.
+
+		Parâmetros
+		----------
+		screen: tela de pygame
+		"""
 		screen.blit(self.image, self.rect)
 
 
-	def move(self):
+	def move(self) -> None:
+		"""
+		Move a bullet.
+		"""
 		if self.shooted == False:
-			return
+			return 
 
 		self.rect.x += self.direction_x
 		self.rect.y += self.direction_y
@@ -61,9 +103,25 @@ class Bullet:
 
 class Bullets():
 	def __init__(self):
+		"""
+		Inicializa objeto de classe Bullets.
+		"""
 		self.bullets = list()
 
-	def shoot(self, screen, objects, platforms, shooter):
+	def shoot(self, screen, objects, platforms, shooter) -> None:
+		"""
+		Responsável por continuar carregando todas as bullets de self.bullets
+
+		Parâmetros
+		----------
+		screen: tela de pygame
+
+		objects: list(retângulo de plataforma) / objeto de player
+			Objetos que vão tomar dano.
+		
+		shooter: objeto de player / objeto de inimigo
+			Quem está atirando.
+		"""
 		if len(self.bullets) == 0:
 			return
 
@@ -72,6 +130,9 @@ class Bullets():
 				bullet.load(screen)
 				bullet.move()
 				bullet.platform_collide(platforms)
+
+				if bullet.rect.y > SCREEN_SIZE[1] or bullet.rect.y < 0:
+					bullet.shooted = False
 
 				if isinstance(shooter, liben.BaseEnemy):
 					bullet.take_damage(objects)

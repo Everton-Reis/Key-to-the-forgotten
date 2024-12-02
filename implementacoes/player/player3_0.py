@@ -19,6 +19,30 @@ class Player:
 		self.rect = sprites.cut_transparent_rect(self.idle_sprites[0])
 		self.rect.center = (x, y)
 
+		# nao gostei de ter um som correndo, mas tá aí
+		# só descomentar isso aqui e o codigo em collide()
+		# self.run_sfx = pygame.mixer.Sound(PLAYER_RUN_SFX)
+		# self.run_sfx.set_volume(0.2)
+		# self.run_channel = pygame.mixer.Channel(1)
+
+		self.level_sfx = pygame.mixer.Sound(PLAYER_LEVEL_SFX)
+
+		self.jump_sfx = pygame.mixer.Sound(PLAYER_JUMP_SFX)
+		self.jump_sfx.set_volume(0.2)
+		self.jump_channel = pygame.mixer.Channel(2)
+
+		self.attack_sfx = pygame.mixer.Sound(PLAYER_ATTACK_SFX)
+		self.attack_sfx.set_volume(0.3)
+		self.attack_channel = pygame.mixer.Channel(3)
+
+		self.death_sfx = pygame.mixer.Sound(PLAYER_DEATH_SFX)
+		self.death_sfx.set_volume(0.7)
+		self.death_channel = pygame.mixer.Channel(4)
+
+		self.get_sfx = pygame.mixer.Sound(PLAYER_GET_SFX)
+		self.get_sfx.set_volume(0.4)
+		self.get_channel = pygame.mixer.Channel(5)
+
 		self.idle_time = 0
 		self.idle_current_sprite = 0
 		self.idle_frame_rate = 10
@@ -79,12 +103,17 @@ class Player:
 		return exp * ((PLAYER_LEVEL_MULTIPLIER + 1) ** (level - 2))
 
 	def level_up(self):
+		if not self.alive:
+			return
+
 		if self.total_exp >= self.next_level:
 			total = int(self.total_exp // self.next_level)
 			self.ant_level = self.level
 			self.level += total
 			self.calc_next_level(total)
+			self.MAX_HEALTH += 0.1 * self.MAX_HEALTH
 			self.health = self.MAX_HEALTH
+			self.level_sfx.play()
 			return True
 
 	def draw_status(self, screen):
@@ -188,6 +217,17 @@ class Player:
 						self.dash_count = 0     
 
 		self.rect.x += self.dx
+
+		# if self.dx != 0:
+		# 	if not self.run_channel.get_busy():
+		# 		self.run_channel.play(self.run_sfx, loops = -1)
+
+		# if self.dx == 0:
+		# 	if self.run_channel.get_busy():
+		# 		self.run_channel.stop()
+
+
+
 		if len(plataforms) > 0:
 			for plataform in plataforms:
 				if self.rect.colliderect(plataform):
@@ -257,6 +297,10 @@ class Player:
 	def update(self, plataforms, enemies):
 		if not self.alive:
 			self.health = 0
+
+			# if self.run_channel.get_busy():
+			# 	self.run_channel.stop()
+
 			return
 
 		self.speed_y += self.gravity_y
@@ -302,6 +346,8 @@ class Player:
 		
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if event.button == 1:
+				self.attack_channel.play(self.attack_sfx)
+				
 				bullet = libat.Bullet((self.rect.x + (self.rect.width // 2), self.rect.y + (self.rect.height // 2)), 
 									  (mouse.get_pos()[0], mouse.get_pos()[1]),
 									  self.damage,
@@ -326,6 +372,7 @@ class Player:
 	def _jump(self):
 		if self.jump_count >= self.jump_count_max:
 			return
+		self.jump_channel.play(self.jump_sfx)
 		self.speed_y = -10
 		self.jump_count += 1
 
@@ -342,6 +389,7 @@ class Player:
 
 	def decrement_health(self, howmuch):
 		self.health -= howmuch
+		self.get_channel.play(self.get_sfx)
 		self.die()
 
 	def increment_health(self, howmuch):
@@ -353,7 +401,9 @@ class Player:
 		if self.health <= 0:
 			self.rect = None
 			self.alive = False
+			self.death_channel.play(self.death_sfx)
 
 		elif self.rect.y > 1000:
 			self.rect = None
 			self.alive = False
+			self.death_channel.play(self.death_sfx)

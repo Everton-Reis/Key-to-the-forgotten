@@ -16,16 +16,21 @@ import player
 
 class BaseEnemy(ABC):
 
-	def __init__(self, x, y, color = None, w = 0, h = 0):
+	def __init__(self, x, y):
 		self.delta = DELTA_GAME
-		self.rect = pygame.Rect(x - w // 2,y - h // 2, w, h)
 		self.health = 10
 		self.speed = 0
 		self.damage = 0
-		self.color = color
 		self.alive = True
 		self.killed_by_player = False
 		self.xp = 0
+
+		self.get_sfx = pygame.mixer.Sound(ENEMY_GET_SFX)
+		self.get_sfx.set_volume(0.6)
+		self.get_channel = pygame.mixer.Channel(6)
+
+		self.death_sfx = None
+		self.death_channel = pygame.mixer.Channel(7)
 
 		self.death_time = 0
 		self.attack_time = 0
@@ -63,15 +68,14 @@ class BaseEnemy(ABC):
 		pass
 
 
+	@abstractmethod
 	def load(self, screen):
-		if self.alive == False:
-			return
-
-		pygame.draw.rect(screen, self.color, self.rect)
+		pass
 
 
 	def decrement_health(self, howmuch):
 		self.health -= howmuch
+		self.get_channel.play(self.get_sfx)
 		self.die()
 
 
@@ -79,6 +83,10 @@ class BaseEnemy(ABC):
 		if self.health <= 0:
 			self.killed_by_player = True
 			self.alive = False
+
+			if self.death_sfx:
+				self.death_channel.play(self.death_sfx)
+
 
 			if self.death_time == 0:
 				self.death_time += 1
@@ -116,8 +124,8 @@ class BaseEnemy(ABC):
 		return True
 
 class MovingEnemy(BaseEnemy):
-	def __init__(self, x, y, color, w, h):
-		super().__init__(x,y, color, w, h)
+	def __init__(self, x, y):
+		super().__init__(x,y)
 		self.tomove = random.randint(10,50)
 		self.max_tomove = self.tomove
 		self.time_to_attack = 0
@@ -168,9 +176,6 @@ class MovingEnemy(BaseEnemy):
 		if enemies and len(enemies.enemies) > 0:
 			for enemy in enemies.enemies:
 				if enemy != self and self.rect.colliderect(enemy.rect):
-					if not self.seeingplayer:
-						self.invert_direction()
-
 					if self.speed_y > 0:
 						self.rect.bottom = enemy.rect.top
 						self.speed_y = 0
@@ -295,11 +300,14 @@ class MovingEnemy(BaseEnemy):
 class WeakMovingEnemy(MovingEnemy):
 
 	def __init__(self, x,y):
-		super().__init__(x, y, (100,100,100), WEAKMOV_SIZE[0], WEAKMOV_SIZE[1])
+		super().__init__(x, y)
 		self.idle_sprites = sprites.cut_sheet(WEAKMOV_IDLE_SPRITE, 7, 1, 1.5)
 		self.attack_sprites = sprites.cut_sheet(WEAKMOV_ATTACK_SPRITE, 7, 1, 1.5)
 		self.death_sprites = sprites.cut_sheet(WEAKMOV_DEATH_SPRITE, 3, 1, 1.5)
 		self.walk_sprites = sprites.cut_sheet(WEAKMOV_WALK_SPRITE, 8, 1, 1.5)
+
+		self.death_sfx = pygame.mixer.Sound(WEAKENEMY_DEATH_SFX)
+		self.death_sfx.set_volume(0.6)
 
 		self.idle_x_0 = 0.8
 		self.idle_y_0 = 0.9
@@ -348,11 +356,14 @@ class WeakMovingEnemy(MovingEnemy):
 class StrongMovingEnemy(MovingEnemy):
 
 	def __init__(self, x,y):
-		super().__init__(x,y, (100,100, 200), STRMOV_SIZE[0], STRMOV_SIZE[1])
+		super().__init__(x,y)
 		self.idle_sprites = sprites.cut_sheet(STRMOV_IDLE_SPRITE, 5, 1, 1.5)
 		self.attack_sprites = sprites.cut_sheet(STRMOV_ATTACK_SPRITE, 6, 1, 1.5)
 		self.death_sprites = sprites.cut_sheet(STRMOV_DEATH_SPRITE, 2, 1, 1.5)
 		self.walk_sprites = sprites.cut_sheet(STRMOV_WALK_SPRITE, 9, 1, 1.5)
+
+		self.death_sfx = pygame.mixer.Sound(STRENEMY_DEATH_SFX)
+		self.death_sfx.set_volume(0.6)
 
 		self.idle_x_0 = 0.75
 		self.idle_y_0 = 1.25
@@ -399,12 +410,15 @@ class StrongMovingEnemy(MovingEnemy):
 class ShootingEnemy(BaseEnemy):
 
 	def __init__(self, x,y):
-		super().__init__(x,y, (0,0,0), SHOOT_SIZE[0], SHOOT_SIZE[1])
+		super().__init__(x,y)
 		self.idle_sprites = sprites.cut_sheet(SHOOT_ENEMIES_IDLE_SPRITE, 6, 1, 1.5)
 		self.attack_sprites = sprites.cut_sheet(SHOOT_ENEMIES_ATTACK_SPRITE, 8, 1, 1.5)
 		self.death_sprites = sprites.cut_sheet(SHOOT_ENEMIES_DEATH_SPRITE, 5, 1, 1.5)
 		self.rect = sprites.cut_transparent_rect(self.idle_sprites[0])
 		self.rect.center = (x, y)
+
+		self.death_sfx = pygame.mixer.Sound(SHOOTENEMY_DEATH_SFX)
+		self.death_sfx.set_volume(0.6)
 
 		self.idle_x_0 = 2
 		self.idle_y_0 = 1.2
@@ -544,8 +558,8 @@ class ShootingEnemy(BaseEnemy):
 		self.bullets.bullets.append(bullet)
 
 class BossShootingEnemy(BaseEnemy):
-	def __init__(self, x,y, color):
-		super().__init__(x,y, color, BOSS_SHOOT_SIZE[0], BOSS_SHOOT_SIZE[1])
+	def __init__(self, x,y):
+		super().__init__(x,y)
 		self.idle_sprites = sprites.cut_sheet(BOSS_SHOOT_IDLE, 6, 1, 1.5)
 		self.attack_sprites = sprites.cut_sheet(BOSS_SHOOT_SHOT, 8, 1, 1.5)
 		self.death_sprites = sprites.cut_sheet(BOSS_SHOOT_DEAD, 5, 1, 1.5)
@@ -610,8 +624,8 @@ class BossShootingEnemy(BaseEnemy):
 			self.direction = 0
 
 		bullet = libat.Bullet((self.rect.center[0], self.rect.center[1]),
-			(player.rect.center[0], player.rect.center[1]),
-				self.damage, (0,50,50), SHOOT_ENEMIES_BULLET_SPRITE)
+			(player.rect.center[0], player.rect.center[1] + player.rect.height // 2),
+				self.damage, (0,50,50), BOSS_SHOOT_BULLET_SPRITE)
 		bullet.shooted = True
 		self.attack_time += 1
 		self.bullets.bullets.append(bullet)
@@ -621,8 +635,8 @@ class BossShootingEnemy(BaseEnemy):
 		self.die()
 
 class Boss(BaseEnemy):
-	def __init__(self, x, y, color):
-		super().__init__(x,y, color, BOSS_SIZE[0], BOSS_SIZE[1])
+	def __init__(self, x, y):
+		super().__init__(x,y)
 		self.idle_sprites = sprites.cut_sheet(BOSS_IDLE_SPRITE, 2, 2, 1)
 		self.attack_sprites = sprites.cut_sheet(BOSS_ATTACK2_SPRITE, 2, 2, 2.5)
 		self.birth_sprites = sprites.cut_sheet(BOSS_BIRTH_SPRITE, 2, 2, 1.5)
@@ -630,6 +644,14 @@ class Boss(BaseEnemy):
 		self.rect = sprites.cut_transparent_rect(self.idle_sprites[0])
 		self.rect.center = (x, y)
 		self.direction = 0
+
+		self.death_sfx = pygame.mixer.Sound(BOSS_DEATH_SFX)
+		self.death_sfx.set_volume(0.6)
+
+		self.birth_sfx = pygame.mixer.Sound(BOSS_BIRTH_SFX)
+		self.birth_sfx.set_volume(0.6)
+		self.birth_channel = pygame.mixer.Channel(8)
+
 
 		self.idle_x_0 = 0.03
 		self.idle_y_0 = 0.03
@@ -680,11 +702,14 @@ class Boss(BaseEnemy):
 		self.enemies = list()
 
 	def move(self, time):
+		if not self.alive:
+			return
+
 		self.rect.y += self.max_offset*math.sin(time.get_ticks() / 500)
 		self.die()
 
 	def load(self, screen):
-		if self.death_time > 0:
+		if self.death_time > 0 and self.death_count < self.max_death_count:
 			sprites.load_sprites_boss_death(self, self.delta, screen)
 			return
 
@@ -692,8 +717,13 @@ class Boss(BaseEnemy):
 			return
 
 		if self.birth_time > 0:
+			if not self.birth_channel.get_busy():
+				self.birth_channel.play(self.birth_sfx, loops = -1)
+
 			sprites.load_sprites_boss_birth(self, self.delta, screen)
 			return
+
+		self.birth_channel.stop()
 
 		# pygame.draw.rect(screen, self.color, self.rect)
 		if self.idle_time >= 0  and self.attack2_count == 0 and self.attack_time == 0:
@@ -738,7 +768,7 @@ class Boss(BaseEnemy):
 			self.direction = 0
 
 		bullet = libat.Bullet((self.rect.center[0], self.rect.center[1]),
-			(player.rect.center[0], player.rect.center[1]),
+			(player.rect.center[0], player.rect.center[1] + player.rect.height // 2),
 				self.damage, (0,50,50), BOSS_BULLET_SPRITE)
 		bullet.shooted = True
 		self.bullets.bullets.append(bullet)
@@ -784,7 +814,7 @@ class Boss(BaseEnemy):
 			x = self.rect.center[0] + radius * math.cos(angle + math.pi/2)
 			y = self.rect.center[1] + radius * math.sin(angle + math.pi/2)
 
-			enemy = BossShootingEnemy(x, y, (100,100,100))
+			enemy = BossShootingEnemy(x, y)
 			self.enemies.append(enemy)
 
 		self.attack3_isrunning = True
@@ -855,7 +885,7 @@ class Enemies():
 
 		enemies_types = [StrongMovingEnemy, ShootingEnemy, WeakMovingEnemy]
 
-		number = random.randint(floor + int(multiplier*10), 2*floor + int(multiplier*10))
+		number = random.randint(2, floor + 2)
 		positions = self.find_random_positions(plataforms, number)
 
 		choices = [random.choice(enemies_types)(positions[i][0], positions[i][1]) for i in range(number)]

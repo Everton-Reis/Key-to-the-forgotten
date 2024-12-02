@@ -348,7 +348,7 @@ class ShootingEnemy(BaseEnemy):
 
 		bullet = libat.Bullet((self.rect.x, self.rect.y),
 					(player.rect.x, player.rect.y),
-						self.damage, (0,255,100), "../../sprites/1.png")
+						self.damage, (0,255,100), "../../sprites/player/bullet.png")
 		bullet.shooted = True
 		self.bullets.bullets.append(bullet)
 

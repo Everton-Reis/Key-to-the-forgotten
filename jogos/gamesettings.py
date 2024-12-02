@@ -7,7 +7,7 @@ DELTA_GAME = 50
 SCREEN_SIZE = (1200, 1000)
 SCREEN_FULLSCREEN = False
 ENDLESS_MODE = False
-MAX_FLOOR = 10
+MAX_FLOOR = 11
 
 BOSS_FLOOR = 3
 BLOCK_SPEED = 2
@@ -142,6 +142,7 @@ KEY_SPRITE = "../../sprites/grass.png"
 
 #sfx e musica
 BACKGROUND_MUSIC = "../../sfx/background.mp3"
+BACKGROUND2_MUSIC = "../../sfx/background2.mp3"
 DEATH_MUSIC = "../../sfx/deathmusic.mp3"
 
 PLAYER_ATTACK_SFX = "../../sfx/player/takedamage.mp3"
@@ -150,3 +151,12 @@ PLAYER_JUMP_SFX = "../../sfx/player/jump.mp3"
 PLAYER_RUN_SFX = "../../sfx/player/run.mp3"
 PLAYER_DEATH_SFX = "../../sfx/player/death.mp3"
 PLAYER_GET_SFX = "../../sfx/player/getdamage.mp3"
+
+ENEMY_GET_SFX = "../../sfx/strenemy/getdamage.mp3"
+
+WEAKENEMY_DEATH_SFX = "../../sfx/weakenemy/weakdeath.mp3"
+STRENEMY_DEATH_SFX = "../../sfx/strenemy/strdeath.mp3"
+SHOOTENEMY_DEATH_SFX = "../../sfx/shootenemy/shootdeath.mp3"
+
+BOSS_DEATH_SFX = "../../sfx/boss/bossdeath.mp3"
+BOSS_BIRTH_SFX = "../../sfx/boss/birthsound.mp3"
