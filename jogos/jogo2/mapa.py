@@ -157,7 +157,7 @@ class Map:
 		elif type == 2:
 			layout = self.boss_layout
 
-		if self.floor == self.max_floor and self.floor != 0 and type != 2:
+		if self.floor == self.max_floor and self.floor != 0:
 			layout = self.end_layout
 
 		plataforms = []
@@ -194,7 +194,7 @@ class Map:
 	def move_map(self, plataforms):
 		if self.game_ended:
 			for index, plataform in enumerate(plataforms):
-				if plataforms[0].y >= SCREEN_SIZE[1] + 100:
+				if plataforms[0].y >= SCREEN_SIZE[1] + 300:
 					break
 
 				plataform.y += self.block_speed
@@ -214,7 +214,7 @@ class Map:
 
 		return extend
 
-	def extend_map(self, enemies, old_plat, old_stand_plat, screen):
+	def extend_map(self, enemies, old_plat, old_stand_plat):
 		if self.floor == self.max_floor:
 			return old_plat, [], None
 
@@ -229,8 +229,14 @@ class Map:
 		else:
 			type = 1 if not is_boss_floor else 2
 			if type == 2:
-				enemies.boss = liben.Boss(SCREEN_SIZE[0] // 2 + 25*BLOCK_SPEED, SCREEN_SIZE[1] // 3)
-				boss_lifebar = Life.LifeBar(enemies.boss, "boss", screen)
+				boss_damage = BOSS_INITIAL_DAMAGE * 0.3 * self.floor
+				boss_maxhealth = BOSS_INITIAL_MAX_HEALTH * 0.3 * self.floor
+				boss_xp = BOSS_XP * 0.3 * self.floor
+
+				enemies.boss = liben.Boss(SCREEN_SIZE[0] // 2 + 25*BLOCK_SPEED, SCREEN_SIZE[1] // 3,
+											boss_damage, boss_maxhealth, boss_xp)
+
+				boss_lifebar = Life.LifeBar(enemies.boss, "boss")
 
 		new_plataforms, new_standing_plataforms = self.give_plataforms(type, True)
 		old_plat = new_plataforms + old_plat

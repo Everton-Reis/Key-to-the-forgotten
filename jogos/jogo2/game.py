@@ -14,8 +14,6 @@ import bars as Life
 
 from gamesettings import *
 
-mapa1 = Map(False)
-
 class GameManager:
 	"""
 	Classe responsável por gerenciar o estado principal do jogo, incluindo lógica, renderização, 
@@ -37,6 +35,7 @@ class GameManager:
 		pygame.init()
 
 		self.screen = screen_game
+		self.mapa1 = Map(False)
 
 		# A tela
 		self.keys_collected = 0
@@ -46,6 +45,7 @@ class GameManager:
 		#self.screen = pygame.display.set_mode(screen_size)
 		#self.screen.fill((0, 0, 0))
 
+		pygame.mixer.set_num_channels(16)
 		self.background_music = BACKGROUND_MUSIC
 		self.death_music = pygame.mixer.Sound(DEATH_MUSIC)
 		self.death_played = False
@@ -53,7 +53,7 @@ class GameManager:
 
 		self.font = pygame.font.Font(None, 36) # tamanho 36
 
-		self.plataforms, self.standing_plataforms = mapa1.give_plataforms(0, False)
+		self.plataforms, self.standing_plataforms = self.mapa1.give_plataforms(0, False)
 		self.extend = False
 
 		# player
@@ -81,7 +81,7 @@ class GameManager:
 		self.lifebar_boss = None
 
 		# alguns atributos de tempo
-		self.delta = 50
+		self.delta = DELTA_GAME
 		self.time_map = 0
 		self.time_shoot_enemy = 0 
 		self.time_enemy_spawn = 0
@@ -146,11 +146,11 @@ class GameManager:
 		Atualiza a lógica do jogo, incluindo movimentação do mapa e comportamento dos inimigos.
 		"""
 		if self.time_map >= self.camera_speed:
-			self.extend = mapa1.move_map(self.plataforms)
+			self.extend = self.mapa1.move_map(self.plataforms)
 			self.time_map = 0
 
 		if self.time_enemy_spawn >= self.spawn_speed and not self.enemies.boss:
-			self.enemies.create_random_enemies(self.standing_plataforms, mapa1.floor)
+			self.enemies.create_random_enemies(self.standing_plataforms, self.mapa1.floor)
 			self.time_enemy_spawn = 0
 
 		if self.time_shoot_enemy >= self.shoot_speed:
@@ -203,7 +203,7 @@ class GameManager:
 		"""
 		Verifica se o player venceu (coletando a chave) e altera o estado do jogo para game_win
 		"""
-		if self.keys_collected > 0:
+		if self.keys_collected == 3:
 			change_state("game_win")
 			self.keys_collected = 0
 
@@ -229,7 +229,7 @@ class GameManager:
 			self.lifebar_boss = None
 
 		if self.extend:
-			self.plataforms, self.standing_plataforms, lifebar_boss = mapa1.extend_map(self.enemies, self.plataforms, self.standing_plataforms, self.screen)
+			self.plataforms, self.standing_plataforms, lifebar_boss = self.mapa1.extend_map(self.enemies, self.plataforms, self.standing_plataforms)
 			if not self.lifebar_boss:
 				self.lifebar_boss = lifebar_boss
 
@@ -243,7 +243,7 @@ class GameManager:
 	def draw(self):
 
 		self.screen.fill((255, 255, 255))
-		mapa1.draw_plataforms(self.screen, self.plataforms, self.height, self.camera_offset)
+		self.mapa1.draw_plataforms(self.screen, self.plataforms, self.height, self.camera_offset)
 		self.player.draw(self.screen, self.delta, pygame.mouse.get_pos())
 
 		self.player.bullets.shoot(self.screen, self.enemies, self.plataforms, self.player)
@@ -254,7 +254,7 @@ class GameManager:
 		self.enemies.check_die(self.player)
 
 		font_status = pygame.font.Font(None, 15)
-		floor_text = f"Andar : {mapa1.floor - 1}"
+		floor_text = f"Andar : {self.mapa1.floor - 1}"
 		floor_surface = self.font.render(floor_text, True, (0,0,0))
 		self.screen.blit(floor_surface, (10, 900))
 
@@ -267,8 +267,6 @@ class GameManager:
 		if self.lifebar_boss:
 			self.lifebar_boss.life_bar_health_draw(self.screen)
 	
-		pygame.display.flip()
-
 ### deve ser retirados
 if __name__ == '__main__':
 	screen = pygame.display.set_mode((SCREEN_SIZE))

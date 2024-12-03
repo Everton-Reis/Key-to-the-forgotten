@@ -47,7 +47,7 @@ class Main:
 		pygame.mixer.music.play(loops=-1)
 
 		# Define o delta para o tempo, necessario para spawns de montros e outras funções
-		self.delta = 50
+		self.delta = DELTA_GAME
 
 	def change_state(self, state_name):
 		"""
@@ -74,7 +74,7 @@ class Main:
 		# Loop principal do jogo
 		while self.is_running:
 			
-			clock.tick()
+			clock.tick(60)
 			events = pygame.event.get()
 			for event in events:
 				if event.type == pygame.QUIT:

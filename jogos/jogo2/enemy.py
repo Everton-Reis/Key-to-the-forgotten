@@ -831,7 +831,7 @@ class BossShootingEnemy(BaseEnemy):
 		self.die()
 
 class Boss(BaseEnemy):
-	def __init__(self, x, y):
+	def __init__(self, x, y, damage, maxhealth, xp):
 		"""
 		Inicializa um objeto da classe Boss.
 
@@ -841,6 +841,12 @@ class Boss(BaseEnemy):
 			posição horizontal
 		y : float
 			posição vertical
+		damage : float
+			dano
+		maxhealth : float
+			Vida máxima
+		xp : float
+			Xp
 		"""
 		super().__init__(x,y)
 		self.idle_sprites = sprites.cut_sheet(BOSS_IDLE_SPRITE, 2, 2, 1)
@@ -891,13 +897,13 @@ class Boss(BaseEnemy):
 		self.birth_current_sprite = 0
 		self.birth_frame_rate = 2
 
-		self.health = BOSS_INITIAL_HEALTH
-		self.MAX_HEALTH = BOSS_INITIAL_MAX_HEALTH
+		self.health = maxhealth
+		self.MAX_HEALTH = maxhealth
 		self.bullets = libat.Bullets()
-		self.damage = BOSS_INITIAL_DAMAGE
+		self.damage = damage
 		self.max_offset = BOSS_MAX_OFFSET
 		self.attack2_config = 0
-		self.xp = BOSS_XP
+		self.xp = xp
 
 		self.attack2_times = random.randint(5,10)
 		self.attack2_count = 0
@@ -1117,7 +1123,7 @@ class Key:
 		----------
 		player: objeto de player
 		"""
-		if self.visible and self.rect.colliderect(player.rect):
+		if player.rect and self.visible and self.rect.colliderect(player.rect):
 			self.visible = False
 			return True
 		return False

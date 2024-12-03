@@ -41,6 +41,10 @@ class LifeBar(pygame.sprite.Sprite):
 			self.target_health = self.max_health
 	
 	def update(self):
+		self.max_health = self.player.MAX_HEALTH
+		self.health_ratio = self.max_health / self.health_bar_length
+
+		
 		self.target_health = min(self.player.health, self.max_health)
 		#self.life_bar_health_draw()
 
@@ -59,7 +63,7 @@ class LifeBar(pygame.sprite.Sprite):
 			transition_color = (255, 255, 0)
 		
 		health_bar_width = int(min(self.current_health, self.max_health) / self.health_ratio)
-		health_bar =pygame.Rect(self.x, self.y, health_bar_width, 25)
+		health_bar = pygame.Rect(self.x, self.y, health_bar_width, 25)
 		transition_bar = pygame.Rect(health_bar.right, 45, transition_width, 25)
 		transition_bar.normalize()
 		pygame.draw.rect(screen, self.bar_color, health_bar, border_radius = 10)
