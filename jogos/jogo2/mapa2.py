@@ -1,34 +1,154 @@
+# mapa.py
 import pygame
 import enemy as liben
 import bars as Life
 import sys
 
-#sys.path.append("../")
+sys.path.append("../")
 
 from gamesettings import *
 
-pygame.init()
-screen = pygame.display.set_mode(SCREEN_SIZE)
-
 # Configurações do bloco e do mapa
-BLUE = (0, 0, 255)
+BLUE = (0, 0, 255, 100)
 RED = (255,0,0)
 GREEN = (0,255,0)
 
-
-
-## NOVO MAPA]
+# Map Assets
+pygame.init()
+screen = pygame.display.set_mode(SCREEN_SIZE)
 from pytmx.util_pygame import load_pygame
 
 tmx_data = load_pygame("../../implementacao_Mapa/data/map/tmx/mapa1.1.tmx")
-##
+end_assets = tmx_data.get_layer_by_name("end_layout")
+map_assets = tmx_data.get_layer_by_name("map_layout")
+extended_map_assets = tmx_data.get_layer_by_name("extend_map_layout")
+boss_map_assets = tmx_data.get_layer_by_name("boss_map_layout")
+
+
+
+# Map Colisors
+end_layout = [
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+     ]
+
+
+map_layout = [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
+    [1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1]
+    ]
+
+extend_map_layout = [
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+    ]
+
+boss_map_layout = [
+     [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+     [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1], 
+     [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1]
+     ]
+
+
+class Tile(pygame.sprite.Sprite):
+    def __init__(self, pos, surface, groups, tile_size):
+        super().__init__(groups)
+        self.image = pygame.transform.scale(surface, (tile_size, tile_size))
+        self.rect = self.image.get_rect(topleft = pos)
+
+
+
+		
 class Map:
 	def __init__(self, endless_mode):
 
-		self.end_layout = [tmx_data.get_layer_by_name('map_layout'), tmx_data.get_layer_by_name('map_objects')]
-		self.extend_layout = [tmx_data.get_layer_by_name('extend_map_layout'), tmx_data.get_layer_by_name('extend_map_objects')]
-		self.boss_layout = [tmx_data.get_layer_by_name('boss_map_layout'), tmx_data.get_layer_by_name('boss_map_objects')]
-		self.normal_layout = [tmx_data.get_layer_by_name('end_layout'), tmx_data.get_layer_by_name('end_objects')]
+		self.normal_layout = map_layout
+		self.extend_layout = extend_map_layout
+		self.boss_layout = boss_map_layout
+		self.end_layout = end_layout
+		self.normal_cenario = map_assets
+		self.extend_cenario = extended_map_assets
+		self.boss_cenario = boss_map_assets
+		self.end_cenario = end_assets
 		self.block_size = BLOCK_SIZE
 		self.color = BLUE
 		self.block_speed = BLOCK_SPEED
@@ -38,15 +158,55 @@ class Map:
 		self.max_floor = 500 if endless_mode else MAX_FLOOR
 		self.game_ended = False
 	
-	def draw_plataforms(self, screen, plataforms, size_height, camera_offset):
+	def draw_plataforms(self, screen, cenario, plataforms, size_height, camera_offset):
+		cenario.draw(screen)
 		for plataform in plataforms:
-			pygame.draw.rect(screen, self.color, plataform)    
-
+			# pygame.draw.rect(screen, self.color, plataform)
 			if plataform.y > size_height + 400:
 				plataforms.remove(plataform)
+		
+		for sprite in cenario: 
+			if sprite.rect.y > size_height + 400:
+				cenario.remove(sprite)
+				
+	def give_cenario(self, type, extend):
+		cenario = None
+		
+		if extend:
+			self.floor += 1
+
+		if self.floor == self.max_floor:
+			self.game_ended = True
+
+		if type == 0:
+			cenario = self.normal_cenario
+		elif type == 1:
+			cenario = self.extend_cenario
+		elif type == 2:
+			cenario  = self.boss_cenario
+
+		if self.floor == self.max_floor and self.floor != 0 and type != 2:
+			cenario  = self.end_cenario
+			
+		sprites = pygame.sprite.Group()
+		
+		map_height = 21 * self.block_size
+        
+
+		
+		for x,y,surf in cenario.tiles():
+			x_pos = x * self.block_size/2 + SCREEN_SIZE[0] // 6
+			y_pos = y * self.block_size/2 + SCREEN_SIZE[1] - map_height
+			if extend:
+				y_pos = y * self.block_size/2 - map_height -  self.block_size* 1.5
+			pos = (x_pos, y_pos)
+			sprites.add(Tile(pos, surf, sprites, (self.block_size/2)))
+			
+		return sprites
 
 	def give_plataforms(self, type, extend):
 		layout = None
+		
 
 		if extend:
 			self.floor += 1
@@ -66,41 +226,49 @@ class Map:
 
 		plataforms = []
 		standing_plataforms = []
-		for obj in layout[1]:
-			plataform_rect = None
-			is_standing = (obj.name == 'floor')
-			if extend:
-				plataform_rect = pygame.Rect(
-							obj.x / 32 * self.block_size + SCREEN_SIZE[0] // 6,
-							-obj.y/ 32 * self.block_size - self.block_size * 1.5,
-							obj.width / 32 * self.block_size,
-							obj.height / 32 * self.block_size
+		for line_index, line in enumerate(layout):
+			for column_index, block in enumerate(line):
+				if block == 1:
+					plataform_rect = None
+					if extend:
+						plataform_rect = pygame.Rect(
+							column_index * self.block_size + SCREEN_SIZE[0] // 6,
+							-line_index * self.block_size - self.block_size * 1.5,
+							self.block_size,
+							self.block_size
 						)
-			else:
-				plataform_rect = pygame.Rect(
-                    obj.x /32 * self.block_size + SCREEN_SIZE[0] // 6,
-                    (obj.y /32 * self.block_size)-SCREEN_SIZE[1],
-                    obj.width * 2,
-                    obj.height * 2
-                ) 
-				print(f'debug:  rect: {obj.x, obj.y, obj.width, obj.height}, plataform{plataform_rect}')
-			plataforms.append(plataform_rect)
-			if is_standing:
-				standing_plataforms.append(plataform_rect)
+					else:
+						plataform_rect = pygame.Rect(
+							column_index * self.block_size + SCREEN_SIZE[0] // 6,
+							-line_index * self.block_size + SCREEN_SIZE[1],
+							self.block_size,
+							self.block_size
+						)
+					plataforms.append(plataform_rect)
+					if line_index > 2 and column_index > 1 and \
+					column_index < len(layout[0]) - 1 and \
+					layout[line_index - 1][column_index] == 0 and \
+					type != 3:
+						standing_plataforms.append(plataform_rect)
+
 
 
 		return plataforms, standing_plataforms
 
-	def move_map(self, plataforms):
+	def move_map(self, plataforms, cenario):
 		if self.game_ended:
 			for index, plataform in enumerate(plataforms):
 				plataform.y += self.block_speed
-
+			
 				if plataforms[0].y >= SCREEN_SIZE[1] + 100:
 					break
-
+				
+			for index, tile in enumerate(cenario):
+				tile.rect.y += self.block_speed
+				if tile.rect.y >= SCREEN_SIZE[1] + 100:
+					break
 			return True
-
+				
 		extend = False
 		for index, plataform in enumerate(plataforms):
 			plataform.y += self.block_speed
@@ -110,12 +278,19 @@ class Map:
 					extend = True
 
 				plataforms.remove(plataform)
+				
+		for index, tile in enumerate(cenario):
+			tile.rect.y += self.block_speed
+			
+			if tile.rect.y == SCREEN_SIZE[1] + (self.block_size/2):
+				cenario.remove(tile)
+		
 
 		return extend
 
-	def extend_map(self, enemies, old_plat, old_stand_plat, screen):
+	def extend_map(self, enemies, old_plat, old_stand_plat, old_cenario, screen):
 		if self.floor == self.max_floor:
-			return old_plat, [], None
+			return old_plat, [], old_cenario, None
 
 		is_boss_floor = self.floor % self.boss_floor == 0 and self.floor != 0
 		is_boss_layout = (self.floor) % self.boss_floor == self.boss_floor - 1 and self.floor != 1
@@ -132,7 +307,12 @@ class Map:
 				boss_lifebar = Life.LifeBar(enemies.boss, "boss", screen)
 
 		new_plataforms, new_standing_plataforms = self.give_plataforms(type, True)
+		new_cenario = self.give_cenario(type, True)
 		old_plat = new_plataforms + old_plat
 		old_stand_plat += new_standing_plataforms
+		for sprite in old_cenario:
+			new_cenario.add(sprite)
+		
+		return old_plat, old_stand_plat, new_cenario, boss_lifebar
 
-		return old_plat, old_stand_plat, boss_lifebar
+

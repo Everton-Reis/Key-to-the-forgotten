@@ -47,7 +47,7 @@ class Map():
         # get tiles
         self.layer_tile = self.tmx_data.get_layer_by_name('tiles') #camada principal
         for x,y,surf in self.layer_tile.tiles(): # montando o mapa no jogo
-            surf.set_colorkey((23,18,23))
+            #surf.set_colorkey((23,18,23))
             x_pos = (x+MARGIN)*TILE_SIZE
             y_pos = (y-self.correction)*TILE_SIZE
             pos = (x_pos, y_pos)
