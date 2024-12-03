@@ -1,16 +1,15 @@
 import pygame
 
 class LifeBar(pygame.sprite.Sprite):
-	def __init__(self, player, name, screen):
+	def __init__(self, player, name):
 		super().__init__()
 		self.player = player
-		self.screen = screen
 
 		self.x = None
 		self.y = None
 			
 		self.current_health = self.player.health
-		#self.target_health = 500
+		self.target_health = 500
 		self.max_health = player.MAX_HEALTH
 		self.health_bar_length = None
 		self.bar_color = None
@@ -42,13 +41,10 @@ class LifeBar(pygame.sprite.Sprite):
 			self.target_health = self.max_health
 	
 	def update(self):
-		self.max_health = self.player.MAX_HEALTH
-		self.health_ratio = self.max_health / self.health_bar_length
-
 		self.target_health = min(self.player.health, self.max_health)
-		self.life_bar_health()
+		#self.life_bar_health_draw()
 
-	def life_bar_health(self):
+	def life_bar_health_draw(self, screen):
 		transition_width = 0
 		transition_color = (255, 0, 0)
 		
@@ -66,15 +62,14 @@ class LifeBar(pygame.sprite.Sprite):
 		health_bar =pygame.Rect(self.x, self.y, health_bar_width, 25)
 		transition_bar = pygame.Rect(health_bar.right, 45, transition_width, 25)
 		transition_bar.normalize()
-		pygame.draw.rect(self.screen, self.bar_color, health_bar, border_radius = 10)
-		pygame.draw.rect(self.screen, transition_color, transition_bar, border_radius = 10)
-		pygame.draw.rect(self.screen, (0, 0, 0), (self.x, self.y, self.health_bar_length, 25), 4, border_radius = 10)
+		pygame.draw.rect(screen, self.bar_color, health_bar, border_radius = 10)
+		pygame.draw.rect(screen, transition_color, transition_bar, border_radius = 10)
+		pygame.draw.rect(screen, (0, 0, 0), (self.x, self.y, self.health_bar_length, 25), 4, border_radius = 10)
 
 class ExpBar():
-	def __init__(self, player, screen):
+	def __init__(self, player):
 		self.player = player
 		self.length = 200
-		self.screen = screen
 		self.current_exp = self.player.total_exp
 		self.color = (100,100,100)
 		self.x = 10
@@ -95,9 +90,9 @@ class ExpBar():
 		if self.target_exp > total_exp:
 			self.target_exp = 0
 			
-		self.exp_bar()
+		#self.exp_bar_draw()
 
-	def exp_bar(self):
+	def exp_bar_draw(self, screen):
 		total_exp = self.player.next_level - self.player.calc_exp(self.player.level) 
 		if self.player.level == 1:
 			total_exp = 100
@@ -118,6 +113,6 @@ class ExpBar():
 		exp_bar = pygame.Rect(self.x, self.y, exp_bar_width, 15)
 		transition_bar = pygame.Rect(exp_bar.right, 80, transition_width, 15)
 		transition_bar.normalize()
-		pygame.draw.rect(self.screen, self.color, exp_bar, border_radius = 5)
-		pygame.draw.rect(self.screen, transition_color, transition_bar, border_radius = 5)
-		pygame.draw.rect(self.screen, (0, 0, 0), (self.x, self.y, self.length, 15), 4, border_radius = 5)
+		pygame.draw.rect(screen, self.color, exp_bar, border_radius = 5)
+		pygame.draw.rect(screen, transition_color, transition_bar, border_radius = 5)
+		pygame.draw.rect(screen, (0, 0, 0), (self.x, self.y, self.length, 15), 4, border_radius = 5)

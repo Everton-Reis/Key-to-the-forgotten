@@ -1,35 +1,40 @@
 import pygame
-from game import GameManager as GM
+from game import GameManager 
+import os
+
+current_dir = os.path.dirname("menu.py")
+font_path = os.path.join(current_dir, "../../sprites/menu/PressStart2P_Regular.ttf")
 
 pygame.init()
 
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 1000
 
-class ScoreManager:
-
-	def __init__(self, x, y, initil_score = 0):
-		self.x = x
-		self.y = y
-		self.score = initil_score
-
-		self.font = pygame.font.Font(None, 36)
-		self.score_msg = "Pontuação {:,}"
-
-	def draw(self, screen):
-		msg = self.score_msg.format(self.score)
-		tex_box = self.font.render(msg, True, "grey")
-		screen.blit(tex_box, (self.x, self.y))
-
-	def increment(self, points = 1):
-		self.score += points
-	
 class Button:
+	"""
+	Classe que representa os botões do jogo.
 
+	Parâmetros
+	----------
+	x : int
+		A coordenada x do botão.
+	y : int
+		A coordenada y do botão.
+	width : int
+		A largura do botão.
+	height : int
+		A altura do botão.
+	text : str
+		O texto exibido no botão.
+	callback : function
+		A função que será executada ao clicar no botão.
+	fontsize : int, opcional
+		O tamanho da fonte do texto no botão (valor padrão é 36).
+	"""
 	def __init__(self, x, y, width, height, text, callback, fontsize=36):
 		self.rect = pygame.Rect(x, y, width, height)
 		self.text = text
-		self.font = pygame.font.Font(None, fontsize)
+		self.font = pygame.font.Font(font_path, fontsize)
 		self.callback = callback
 
 		self.color_default = "white"
@@ -37,93 +42,215 @@ class Button:
 		self.color_current = self.color_default
 
 	def draw(self, screen):
+		"""
+		Desenha o botão na tela.
+
+		Parâmetros
+		----------
+		screen : pygame.Surface
+			A superfície onde o botão será desenhado.
+		"""
 		pygame.draw.rect(screen, self.color_current, self.rect)
 		text_box = self.font.render(self.text, True, "black")
 		text_box_rect = text_box.get_rect(center=self.rect.center)
 		screen.blit(text_box, text_box_rect)
 
 	def on_event(self, event):
+		"""
+		Verifica e responde aos eventos do mouse sobre o botão.
+
+		Parâmetros
+		----------
+		event : pygame.event
+			O evento que está sendo processado.
+		"""
 		if event.type == pygame.MOUSEBUTTONDOWN:
-			has_collided = self.rect.collidepoint(event.pos)
-			if has_collided and event.button == 1:
+			if self.rect.collidepoint(event.pos) and event.button == 1:
 				self.callback()
 			
 		if event.type == pygame.MOUSEMOTION:
-			has_collided = self.rect.collidepoint(event.pos)
-			if has_collided:
+			if self.rect.collidepoint(event.pos):
 				self.color_current = self.color_hover
 			else:
 				self.color_current = self.color_default
-			
-class MainMenu:
 
-	def __init__(self, manager):
+
+class MainMenu:
+	"""
+	Classe que representa o menu principal do jogo.
+
+	Parâmetros
+	----------
+	manager : pygame.game
+		A instância do gerenciador do jogo.
+	"""
+	def __init__(self, manager): 
 		self.manager = manager
-		self.start_button = Button(SCREEN_WIDTH //2 - 100, SCREEN_HEIGHT //2 - 25, 200, 50, "Start", self.start_callback)
-		self.exit_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT //2 + 100, 200, 50, "exit", self.exit_callback)
+		self.start_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 25, 200, 50, "Start", self.start_callback)
+		self.exit_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 100, 200, 50, "Exit", self.exit_callback)
+
+		self.font = pygame.font.Font(None, 200)
 
 	def draw(self, screen):
+		"""
+		Desenha o menu principal na tela.
+
+		Parâmetros
+		----------
+		screen : pygame.Surface
+			A superfície onde o menu será desenhado.
+		"""
 		screen.fill((0, 0, 0))
 		self.start_button.draw(screen)
 		self.exit_button.draw(screen)
+		
+		menu_text = f"MENU"
+		menu_surface = self.font.render(menu_text, True, (255, 0, 0))
+		screen.blit(menu_surface, (400, 200))
+
 		pygame.display.flip()
 	
-	def on_event(self, event):
+	def event(self, event):
+		"""
+		Processa eventos do menu principal.
+
+		Parâmetros
+		----------
+		event : pygame.event
+			O evento a ser processado.
+		"""
 		self.start_button.on_event(event)
 		self.exit_button.on_event(event)
 
 	def start_callback(self):
-		print("start button clicked")
-		self.manager.is_running = False
-		game_instance = GM()
-		game_instance.run()
-		#self.manager.change_state("game_level")
+		"""Altera o estado do jogo para o nível principal."""
+		self.manager.change_state("game_level")
 
 	def exit_callback(self):
+		"""Finaliza o jogo."""
 		self.manager.is_running = False
-	
-class GameLevel:
 
-	def __init__(self, manager):
-		pass
+
+class GameOver:
+	"""
+	Classe que representa a tela de Game Over.
+	
+	Parâmetros
+	----------
+	manager : pygame.game
+		A instância do gerenciador do jogo.
+	screen : pygame.Surface
+		A superfície onde a tela será exibida.
+	"""
+	def __init__(self, manager, screen):
+		self.manager = manager
+		self.screen = screen
+		self.reset_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 25, 200, 50, "Reset", self.reset_callback)
+		self.exit_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 100, 200, 50, "Exit", self.exit_callback)
+
+		self.font = pygame.font.Font(None, 200)
 
 	def draw(self, screen):
-		screen.fill((255, 0, 0))
-		pygame.display.update()
+		"""
+		Desenha a tela de Game Over.
+
+		Parâmetros
+		----------
+		screen : pygame.Surface
+			A superfície onde a tela será desenhada.
+		"""
+		screen.fill((0, 0, 0))
+		self.reset_button.draw(screen)
+		self.exit_button.draw(screen)
+
+		game_over_text = f"GAME OVER"
+		game_over_surface = self.font.render(game_over_text, True, (255, 0, 0))
+		screen.blit(game_over_surface, (200, 200))
+
+		pygame.display.flip()
 	
-	def on_event(self, event):
+	def event(self, event):
+		"""
+		Processa eventos da tela de Game Over.
+
+		Parâmetros
+		----------
+		event : pygame.event
+			O evento a ser processado.
+		"""
+		self.reset_button.on_event(event)
+		self.exit_button.on_event(event)
+
+	def reset_callback(self):
+		"""Reinicia o nível do jogo."""
+		del self.manager.states["game_level"]
+		self.manager.states["game_level"] = GameManager(self.manager, self.screen)
+		self.manager.change_state("game_level")
+
+	def exit_callback(self):
+		"""Finaliza o jogo."""
+		self.manager.is_running = False
+
+	# Método de verificação necessário para evitar erros quando a change_state é ativada.
+	def verify_win(self, change_state):
 		pass
-		
 
-class GameManager:
 
-	def __init__(self):
-		self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-		self.states = {
-			"main_menu": MainMenu(self),
-			"game_level": GameLevel(self)
-		}
-		self.current_state = self.states["main_menu"]
-		self.is_running = False
+class GameWin:
+	"""
+	Classe que representa a tela de vitória do jogo.
+	
+	Parâmetros
+	----------
+	manager : pygame.game
+		A instância do gerenciador do jogo.
+	screen : pygame.Surface
+		A superfície onde a tela será exibida.
+	"""
+	def __init__(self, manager, screen):
+		self.manager = manager
+		self.screen = screen
+		self.menu_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 25, 200, 50, "Menu", self.menu_callback)
+		self.exit_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 100, 200, 50, "Exit", self.exit_callback)
 
-	def change_state(self, state_name):
-		self.current_state = self.states[state_name]
+		self.font = pygame.font.Font(None, 200)
+	def draw(self, screen):
+		"""
+		Desenha a tela de vitória.
 
-	def run(self):
-		self.is_running = True
-		while self.is_running:
-			events = pygame.event.get()
-			for event in events:
-				if event.type == pygame.QUIT:
-					self.is_running = False
-				self.current_state.on_event(event)
-			
-			self.current_state.draw(self.screen)
-			pygame.display.flip()
-		
-		pygame.quit()
+		Parâmetros
+		----------
+		screen : pygame.Surface
+			A superfície onde a tela será desenhada.
+		"""
+		screen.fill((0, 0, 0))
+		self.menu_button.draw(screen)
+		self.exit_button.draw(screen)
 
-if __name__ == "__main__":
-	game = GameManager()
-	game.run()
-			
+		win_text = f"WIN"
+		win_surface = self.font.render(win_text, True, (255, 0, 0))
+		screen.blit(win_surface, (450, 200))
+
+		pygame.display.flip()
+	
+	def event(self, event):
+		"""
+		Processa eventos da tela de vitória.
+
+		Parâmetros
+		----------
+		event : pygame.event
+			O evento a ser processado.
+		"""
+		self.menu_button.on_event(event)
+		self.exit_button.on_event(event)
+
+	def menu_callback(self):
+		"""Retorna ao menu principal."""
+		del self.manager.states["game_level"]
+		self.manager.states["game_level"] = GameManager(self.manager, self.screen)
+		self.manager.change_state("main_menu")
+
+	def exit_callback(self):
+		"""Finaliza o jogo."""
+		self.manager.is_running = False
