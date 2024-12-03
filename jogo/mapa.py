@@ -240,8 +240,6 @@ class Map:
 
 		new_plataforms, new_standing_plataforms = self.give_plataforms(type, True)
 		old_plat = new_plataforms + old_plat
-		old_stand_plat += new_standing_plataforms
+		old_stand_plat = new_standing_plataforms
 
 		return old_plat, old_stand_plat, boss_lifebar
-
-

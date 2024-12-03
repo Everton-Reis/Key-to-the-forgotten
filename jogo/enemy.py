@@ -36,7 +36,7 @@ class BaseEnemy(ABC):
 		self.xp = 0
 
 		self.get_sfx = pygame.mixer.Sound(ENEMY_GET_SFX)
-		self.get_sfx.set_volume(0.6)
+		self.get_sfx.set_volume(0.3)
 		self.get_channel = pygame.mixer.Channel(6)
 
 		self.death_sfx = None
@@ -438,7 +438,7 @@ class WeakMovingEnemy(MovingEnemy):
 		self.walk_sprites = sprites.cut_sheet(WEAKMOV_WALK_SPRITE, 8, 1, 1.5)
 
 		self.death_sfx = pygame.mixer.Sound(WEAKENEMY_DEATH_SFX)
-		self.death_sfx.set_volume(0.6)
+		self.death_sfx.set_volume(0.2)
 
 		self.idle_x_0 = 0.8
 		self.idle_y_0 = 0.9
@@ -504,7 +504,7 @@ class StrongMovingEnemy(MovingEnemy):
 		self.walk_sprites = sprites.cut_sheet(STRMOV_WALK_SPRITE, 9, 1, 1.5)
 
 		self.death_sfx = pygame.mixer.Sound(STRENEMY_DEATH_SFX)
-		self.death_sfx.set_volume(0.6)
+		self.death_sfx.set_volume(0.2)
 
 		self.idle_x_0 = 0.75
 		self.idle_y_0 = 1.25
@@ -569,7 +569,7 @@ class ShootingEnemy(BaseEnemy):
 		self.rect.center = (x, y)
 
 		self.death_sfx = pygame.mixer.Sound(SHOOTENEMY_DEATH_SFX)
-		self.death_sfx.set_volume(0.6)
+		self.death_sfx.set_volume(0.2)
 
 		self.idle_x_0 = 2
 		self.idle_y_0 = 1.2
@@ -1193,7 +1193,7 @@ class Enemies():
 
 		enemies_types = [StrongMovingEnemy, ShootingEnemy, WeakMovingEnemy]
 
-		number = random.randint(2, floor + 2)
+		number = random.randint(2, 5)
 		positions = self.find_random_positions(plataforms, number)
 
 		choices = [random.choice(enemies_types)(positions[i][0], positions[i][1]) for i in range(number)]
@@ -1395,11 +1395,12 @@ class Enemies():
 
 			self.enemies = self.mov_enemies + self.shoot_enemies
 			if not self.boss.alive and self.boss.death_time == 0:
-				if not self.enemies and not self.boss.enemies:
-					if not self.key.visible:
-						if self.last_enemy:
-							self.key.activate(self.last_enemy.rect.center)
+				if not self.key.visible:
+					if self.last_enemy:
+						self.key.activate(self.last_enemy.rect.center)
 
 
 				if len(self.boss.enemies) == 0:
+					if self.boss.birth_channel.get_busy():
+						self.boss.birth_channel.stop()
 					self.boss = None

@@ -61,7 +61,7 @@ class Main:
 		self.current_state = self.states[state_name]
 
 		# Reinicia a música se o estado for for o menu ou a lógica principal do jogo
-		if state_name in ["main_menu", "game_level"]:
+		if state_name in ["main_menu", "game_level"] and not pygame.mixer.music.get_busy():
 			pygame.mixer.music.stop()
 			pygame.mixer.music.play(loops=-1)
 
