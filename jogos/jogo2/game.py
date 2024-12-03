@@ -68,6 +68,7 @@ class GameManager:
 		self.camera_speed = CAMERA_SPEED
 		self.shoot_speed = SHOOT_SPEED
 		self.spawn_speed = SPAWN_SPEED
+		self.changed_speed = False
 
 		self.camera_offset = [0, 0]
 
@@ -113,7 +114,7 @@ class GameManager:
 		self.initalize_game()
 
 		while self.is_running:   
-			self.clock.tick(60)   
+			self.clock.tick(60)
 
 			self.update_timers()
 			self.handle_events()
@@ -148,6 +149,13 @@ class GameManager:
 		if self.time_map >= self.camera_speed:
 			self.extend = self.mapa1.move_map(self.plataforms)
 			self.time_map = 0
+
+		print(self.spawn_speed)
+		if self.mapa1.floor % 2 == 0 and not self.changed_speed:
+			self.spawn_speed -= 0.1 * self.spawn_speed
+			self.changed_speed = True
+		elif self.mapa1.floor % 2 != 0 and self.changed_speed:
+			self.changed_speed = False
 
 		if self.time_enemy_spawn >= self.spawn_speed and not self.enemies.boss:
 			self.enemies.create_random_enemies(self.standing_plataforms, self.mapa1.floor)

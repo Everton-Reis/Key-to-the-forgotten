@@ -1193,7 +1193,7 @@ class Enemies():
 
 		enemies_types = [StrongMovingEnemy, ShootingEnemy, WeakMovingEnemy]
 
-		number = random.randint(2, floor + 2)
+		number = random.randint(2, 5)
 		positions = self.find_random_positions(plataforms, number)
 
 		choices = [random.choice(enemies_types)(positions[i][0], positions[i][1]) for i in range(number)]
