@@ -98,6 +98,7 @@ LS_PROB = 10
 
 #sprites
 PLAYER_WEAPON_SPRITE = "../../sprites/player/weapon.png"
+PLAYER_SECRET_WEAPON = "../../sprites/player/secretweapon.png"
 PLAYER_IDLE_SPRITE = "../../sprites/player/idle.png"
 PLAYER_RUN_SPRITE = "../../sprites/player/run.png"
 PLAYER_BULLET_SPRITE = "../../sprites/player/bullet.png"
@@ -151,6 +152,8 @@ PLAYER_JUMP_SFX = "../../sfx/player/jump.mp3"
 PLAYER_RUN_SFX = "../../sfx/player/run.mp3"
 PLAYER_DEATH_SFX = "../../sfx/player/death.mp3"
 PLAYER_GET_SFX = "../../sfx/player/getdamage.mp3"
+PLAYER_SPECIAL_SFX = "../../sfx/player/special.mp3"
+PLAYER_SECRETATTACK_SFX = "../../sfx/player/secretattack.mp3"
 
 ENEMY_GET_SFX = "../../sfx/strenemy/getdamage.mp3"
 

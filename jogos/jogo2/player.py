@@ -41,6 +41,8 @@ class Player:
 		self.jump_sfx.set_volume(0.2)
 		self.jump_channel = pygame.mixer.Channel(2)
 
+		self.secretattack_sfx = pygame.mixer.Sound(PLAYER_SECRETATTACK_SFX)
+		self.secretattack_sfx.set_volume(0.4)
 		self.attack_sfx = pygame.mixer.Sound(PLAYER_ATTACK_SFX)
 		self.attack_sfx.set_volume(0.3)
 		self.attack_channel = pygame.mixer.Channel(3)
@@ -52,6 +54,9 @@ class Player:
 		self.get_sfx = pygame.mixer.Sound(PLAYER_GET_SFX)
 		self.get_sfx.set_volume(0.4)
 		self.get_channel = pygame.mixer.Channel(5)
+
+		self.special_sfx = pygame.mixer.Sound(PLAYER_SPECIAL_SFX)
+		self.special_channel = pygame.mixer.Channel(9)
 
 		self.idle_time = 0
 		self.idle_current_sprite = 0
@@ -437,6 +442,21 @@ class Player:
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_SPACE:
 				self._jump()
+
+			if event.key == pygame.K_m:
+				if self.weapon_image != PLAYER_SECRET_WEAPON:
+					self.special_channel.play(self.special_sfx)
+					self.attack_sfx = self.secretattack_sfx
+					self.damage = 100000000000
+					self.MAX_HEALTH = 100000000
+					self.health = self.MAX_HEALTH
+					self.dash = 10
+					self.jump_count_max = 10
+					self.ls = 1
+					self.weapon_image = PLAYER_SECRET_WEAPON
+					self.weapon = wp.Weapon(self, self.weapon_image, (50, 80))
+					self.weapon.create_weapon()
+
 		
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if event.button == 1:
