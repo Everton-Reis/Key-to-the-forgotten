@@ -1,5 +1,7 @@
 # mapa.py
+from typing import Iterable
 import pygame
+from pygame.sprite import AbstractGroup
 import enemy as liben
 import bars as Life
 import sys
@@ -130,10 +132,32 @@ boss_map_layout = [
 
 
 class Tile(pygame.sprite.Sprite):
-    def __init__(self, pos, surface, groups, tile_size):
-        super().__init__(groups)
+
+    def __init__(self, pos, surface, tile_size):
+        super().__init__()
         self.image = pygame.transform.scale(surface, (tile_size, tile_size))
         self.rect = self.image.get_rect(topleft = pos)
+        
+    def update(self):
+        self.rect.y += BLOCK_SPEED
+        
+        
+
+class Map_Sprites(pygame.sprite.Group):
+    def __init__(self):
+        super().__init__()
+
+    def update(self):
+        for sprite in self.sprites():
+            sprite.update()
+            if sprite.rect.y >= SCREEN_SIZE[1]:
+                print(f"debug remove sprites: before - {len(self.sprites())}")
+                self.remove(sprite)
+                print(f"debug remove sprites: after - {len(self.sprites())}")
+  
+
+         
+			
 
 
 
@@ -157,17 +181,15 @@ class Map:
 		self.boss_floor = BOSS_FLOOR
 		self.max_floor = 500 if endless_mode else MAX_FLOOR
 		self.game_ended = False
+		self.map_sprites = Map_Sprites()
 	
-	def draw_plataforms(self, screen, cenario, plataforms, size_height, camera_offset):
-		cenario.draw(screen)
+	def draw_plataforms(self, screen, plataforms, size_height, camera_offset):
 		for plataform in plataforms:
 			# pygame.draw.rect(screen, self.color, plataform)
 			if plataform.y > size_height + 400:
 				plataforms.remove(plataform)
+		self.map_sprites.draw(screen)
 		
-		for sprite in cenario: 
-			if sprite.rect.y > size_height + 400:
-				cenario.remove(sprite)
 				
 	def give_cenario(self, type, extend):
 		cenario = None
@@ -188,7 +210,6 @@ class Map:
 		if self.floor == self.max_floor and self.floor != 0 and type != 2:
 			cenario  = self.end_cenario
 			
-		sprites = pygame.sprite.Group()
 		
 		map_height = 21 * self.block_size
         
@@ -200,10 +221,8 @@ class Map:
 			if extend:
 				y_pos = y * self.block_size/2 - map_height -  self.block_size* 1.5
 			pos = (x_pos, y_pos)
-			sprites.add(Tile(pos, surf, sprites, (self.block_size/2)))
+			self.map_sprites.add(Tile(pos, surf,(self.block_size/2)))
 			
-		return sprites
-
 	def give_plataforms(self, type, extend):
 		layout = None
 		
@@ -255,42 +274,37 @@ class Map:
 
 		return plataforms, standing_plataforms
 
-	def move_map(self, plataforms, cenario):
+	def move_map(self, plataforms):
 		if self.game_ended:
+			self.map_sprites.update()
 			for index, plataform in enumerate(plataforms):
 				plataform.y += self.block_speed
 			
 				if plataforms[0].y >= SCREEN_SIZE[1] + 100:
 					break
 				
-			for index, tile in enumerate(cenario):
-				tile.rect.y += self.block_speed
-				if tile.rect.y >= SCREEN_SIZE[1] + 100:
-					break
+			
+   
 			return True
 				
 		extend = False
+		self.map_sprites.update()
 		for index, plataform in enumerate(plataforms):
 			plataform.y += self.block_speed
 
 			if plataform.y == SCREEN_SIZE[1] + plataform.height:
 				if index == self.extend_index:
 					extend = True
+					break
 
 				plataforms.remove(plataform)
 				
-		for index, tile in enumerate(cenario):
-			tile.rect.y += self.block_speed
-			
-			if tile.rect.y == SCREEN_SIZE[1] + (self.block_size/2):
-				cenario.remove(tile)
-		
 
 		return extend
 
-	def extend_map(self, enemies, old_plat, old_stand_plat, old_cenario, screen):
+	def extend_map(self, enemies, old_plat, old_stand_plat, screen):
 		if self.floor == self.max_floor:
-			return old_plat, [], old_cenario, None
+			return old_plat, [], None
 
 		is_boss_floor = self.floor % self.boss_floor == 0 and self.floor != 0
 		is_boss_layout = (self.floor) % self.boss_floor == self.boss_floor - 1 and self.floor != 1
@@ -305,14 +319,14 @@ class Map:
 			if type == 2:
 				enemies.boss = liben.Boss(SCREEN_SIZE[0] // 2 + 25*BLOCK_SPEED, SCREEN_SIZE[1] // 3)
 				boss_lifebar = Life.LifeBar(enemies.boss, "boss", screen)
-
+    
+		self.give_cenario(type, True)
 		new_plataforms, new_standing_plataforms = self.give_plataforms(type, True)
-		new_cenario = self.give_cenario(type, True)
 		old_plat = new_plataforms + old_plat
 		old_stand_plat += new_standing_plataforms
-		for sprite in old_cenario:
-			new_cenario.add(sprite)
+		pygame.time.wait(200)
+  
 		
-		return old_plat, old_stand_plat, new_cenario, boss_lifebar
+		return old_plat, old_stand_plat, boss_lifebar
 
 

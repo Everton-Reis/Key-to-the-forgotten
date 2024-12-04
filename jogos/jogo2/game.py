@@ -42,7 +42,7 @@ class GameManager:
 		self.expbar_player = Life.ExpBar(self.player, self.screen)
 
 		self.plataforms, self.standing_plataforms = mapa1.give_plataforms(0, False)
-		self.cenario = mapa1.give_cenario(0, False)
+		mapa1.give_cenario(0, False)
 		self.extend = False
 
 		self.clock = None
@@ -83,7 +83,7 @@ class GameManager:
 				self.is_running, self.buff_paused = self.buffs.choose_buff(self.player, self.screen, (200,500), pygame.mouse)
 
 			if time_map >= self.camera_speed:
-				self.extend = mapa1.move_map(self.plataforms, self.cenario)
+				self.extend = mapa1.move_map(self.plataforms)
 				time_map = 0
 
 			if time_enemy_spawn >= self.spawn_speed and not self.enemies.boss:
@@ -136,11 +136,14 @@ class GameManager:
 		if not self.enemies.boss:
 			self.lifebar_boss = None
 
+
 		if self.extend:
-			self.plataforms, self.standing_plataforms, self.cenario, lifebar_boss = mapa1.extend_map(self.enemies, self.plataforms, self.standing_plataforms, self.cenario, self.screen)
+			self.plataforms, self.standing_plataforms, lifebar_boss = mapa1.extend_map(self.enemies, self.plataforms, self.standing_plataforms, self.screen)
 
 			if not self.lifebar_boss:
 				self.lifebar_boss = lifebar_boss
+    
+			#self.extend = False
 
 		if self.player.level_up():
 			self.buff_paused = True
@@ -152,7 +155,7 @@ class GameManager:
 	def draw(self, delta):
 		# Renderizaçao
 		self.screen.fill((255, 255, 255))
-		mapa1.draw_plataforms(self.screen, self.cenario, self.plataforms, self.height, self.camera_offset)
+		mapa1.draw_plataforms(self.screen, self.plataforms, self.height, self.camera_offset)
 		self.player.draw(self.screen, delta, pygame.mouse.get_pos())
 
 		self.player.bullets.shoot(self.screen, self.enemies, self.plataforms, self.player)
