@@ -9,8 +9,6 @@ sys.path.append("../")
 
 from gamesettings import *
 
-#sys.path.append('../atirar')
-
 import bullets as libat
 import player
 

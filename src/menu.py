@@ -1,11 +1,12 @@
 import pygame
 from game import GameManager 
+from gamesettings import *
 import os
 
 current_dir = os.path.dirname("menu.py")
-font_path = os.path.join(current_dir, "../assets/sprites/menu/PressStart2P_Regular.ttf")
+font_path = os.path.join(current_dir, FONT_PATH)
 
-image_path = os.path.join(current_dir, "../assets/sprites/menu/background.png")
+image_path = os.path.join(current_dir, BACKGROUND_MENU_PATH)
 
 pygame.init()
 

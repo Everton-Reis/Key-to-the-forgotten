@@ -30,8 +30,9 @@ class Player:
 		self.rect = sprites.cut_transparent_rect(self.idle_sprites[0])
 		self.rect.center = (x, y)
 
-		# nao gostei de ter um som correndo, mas tá aí
-		# só descomentar isso aqui e o codigo em collide()
+		# Para ativar o som do player correndo
+		# Basta descomentar isso aqui e o codigo em collide()
+		# Por preferencia, optamos por deixar sem
 		# self.run_sfx = pygame.mixer.Sound(PLAYER_RUN_SFX)
 		# self.run_sfx.set_volume(0.2)
 		# self.run_channel = pygame.mixer.Channel(1)
@@ -70,7 +71,7 @@ class Player:
 		self.m_counter = 0
 		self.m_max_count = 10
 
-		self.gravity_y = 0.6 # pixels^2 / frame
+		self.gravity_y = 0.6 
 		self.speed_y = 0
 		self.jump_count = 0
 		self.dash_count = 0
@@ -81,7 +82,6 @@ class Player:
 		self.next_level = 100
 		self.ant_level = 0
 		self.level = 1
-
 
 		self.health = PLAYER_INITIAL_HEALTH
 		self.speed_x = PLAYER_INITIAL_SPEED
@@ -303,8 +303,6 @@ class Player:
 		# 	if self.run_channel.get_busy():
 		# 		self.run_channel.stop()
 
-
-
 		if len(plataforms) > 0:
 			for plataform in plataforms:
 				if self.rect.colliderect(plataform):
@@ -447,8 +445,12 @@ class Player:
 			if event.key == pygame.K_SPACE:
 				self._jump()
 
+			if event.key == pygame.K_F11:
+				pass
+
 			if event.key == pygame.K_m:
 				self.m_counter += 1
+				print("cliquei m")
 				if self.m_counter == self.m_max_count:
 					if self.weapon_image != PLAYER_SECRET_WEAPON:
 						self.special_channel.play(self.special_sfx)

@@ -83,15 +83,6 @@ class GameManager:
 		self.time_shoot_enemy = 0 
 		self.time_enemy_spawn = 0
 
-	### essa função deve ser retirada
-	def initalize_game(self):
-		""" inicializa os componentes"""
-		self.clock = pygame.time.Clock()
-		self.is_running = True
-
-		pygame.mixer.music.load(self.background_music)
-		pygame.mixer.music.play(loops = -1)
-
 	def update_timers(self):
 		"""
 		Atualiza os temporizadores do jogo.
@@ -99,30 +90,6 @@ class GameManager:
 		self.time_shoot_enemy += self.delta
 		self.time_map += self.delta
 		self.time_enemy_spawn += self.delta	
-		#print(f"A trindade do tempo é {self.time_shoot_enemy, self.time_map, self.time_enemy_spawn}")
-		# a += self.delta
-		# b += self.delta
-		# c += self.delta
-		# return a, b, c
-
-	def run(self):
-		# Inicializa o jogo
-		self.initalize_game()
-
-		while self.is_running:   
-			self.clock.tick(60)
-
-			self.update_timers()
-			self.handle_events()
-			self.update_logic()
-			self.render()
-
-		pygame.quit()
-	
-	def render(self):
-		self.event2()
-		self.draw()
-		self.update()
 
 	def handle_events(self):
 		"""
@@ -229,6 +196,7 @@ class GameManager:
 	def draw(self):
 
 		self.screen.fill((255, 255, 255))
+
 		self.mapa1.draw_plataforms(self.screen, self.plataforms, self.height, self.camera_offset)
 		self.player.draw(self.screen, self.delta, pygame.mouse.get_pos())
 

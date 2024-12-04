@@ -27,7 +27,7 @@ PLAYER_INITIAL_DASH = 0
 PLAYER_INITIAL_SHOOT = 0
 PLAYER_INITIAL_LS = 0
 
-PLAYER_WEAPON_SIZE = (100, 80)
+PLAYER_WEAPON_SIZE = (75, 50)
 
 
 #configurações dos inimigos
@@ -136,7 +136,7 @@ DASH_SPRITE = "../assets/sprites/buffs/dash.png"
 LS_SPRITE = "../assets/sprites/buffs/lifesteal.png"
 
 
-KEY_SPRITE = "../assets/sprites/grass.png"
+KEY_SPRITE = "../assets/sprites/key/key_gold.png"
 
 
 #sfx e música
@@ -161,3 +161,6 @@ SHOOTENEMY_DEATH_SFX = "../assets/sfx/shootenemy/shootdeath.mp3"
 
 BOSS_DEATH_SFX = "../assets/sfx/boss/bossdeath.mp3"
 BOSS_BIRTH_SFX = "../assets/sfx/boss/birthsound.mp3"
+
+FONT_PATH = "../assets/sprites/menu/PressStart2P_Regular.ttf"
+BACKGROUND_MENU_PATH = "../assets/sprites/menu/background.png"
