@@ -5,6 +5,8 @@ import os
 current_dir = os.path.dirname("menu.py")
 font_path = os.path.join(current_dir, "../assets/sprites/menu/PressStart2P_Regular.ttf")
 
+image_path = os.path.join(current_dir, "../assets/sprites/menu/background.png")
+
 pygame.init()
 
 SCREEN_WIDTH = 1200
@@ -89,7 +91,7 @@ class MainMenu:
 		self.start_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 25, 200, 50, "Start", self.start_callback)
 		self.exit_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 100, 200, 50, "Exit", self.exit_callback)
 
-		self.font = pygame.font.Font(None, 200)
+		self.font = pygame.font.Font(font_path, 56)
 
 	def draw(self, screen):
 		"""
@@ -100,13 +102,18 @@ class MainMenu:
 		screen : pygame.Surface
 			A superfície onde o menu será desenhado.
 		"""
-		screen.fill((0, 0, 0))
+		#screen.fill((58, 58, 81))
+
+		self.background = pygame.image.load(image_path)
+		self.background = pygame.transform.scale(self.background, screen.get_size())
+		screen.blit(self.background, (0, 0))
+
 		self.start_button.draw(screen)
 		self.exit_button.draw(screen)
 		
-		menu_text = f"MENU"
+		menu_text = f"KEY TO THE FORGOTTEN"
 		menu_surface = self.font.render(menu_text, True, (255, 0, 0))
-		screen.blit(menu_surface, (400, 200))
+		screen.blit(menu_surface, (50, 250))
 
 		pygame.display.flip()
 	
@@ -148,7 +155,7 @@ class GameOver:
 		self.reset_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 25, 200, 50, "Reset", self.reset_callback)
 		self.exit_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 100, 200, 50, "Exit", self.exit_callback)
 
-		self.font = pygame.font.Font(None, 200)
+		self.font = pygame.font.Font(font_path, 56)
 
 	def draw(self, screen):
 		"""
@@ -159,13 +166,16 @@ class GameOver:
 		screen : pygame.Surface
 			A superfície onde a tela será desenhada.
 		"""
-		screen.fill((0, 0, 0))
+		self.background = pygame.image.load(image_path)
+		self.background = pygame.transform.scale(self.background, screen.get_size())
+		screen.blit(self.background, (0, 0))
+
 		self.reset_button.draw(screen)
 		self.exit_button.draw(screen)
 
 		game_over_text = f"GAME OVER"
 		game_over_surface = self.font.render(game_over_text, True, (255, 0, 0))
-		screen.blit(game_over_surface, (200, 200))
+		screen.blit(game_over_surface, (350, 250))
 
 		pygame.display.flip()
 	
@@ -213,7 +223,7 @@ class GameWin:
 		self.menu_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 25, 200, 50, "Menu", self.menu_callback)
 		self.exit_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 100, 200, 50, "Exit", self.exit_callback)
 
-		self.font = pygame.font.Font(None, 200)
+		self.font = pygame.font.Font(font_path, 56)
 	def draw(self, screen):
 		"""
 		Desenha a tela de vitória.
@@ -223,18 +233,21 @@ class GameWin:
 		screen : pygame.Surface
 			A superfície onde a tela será desenhada.
 		"""
-		screen.fill((0, 0, 0))
+		self.background = pygame.image.load(image_path)
+		self.background = pygame.transform.scale(self.background, screen.get_size())
+		screen.blit(self.background, (0, 0))
+
 		self.menu_button.draw(screen)
 		self.exit_button.draw(screen)
 
 		win_text = f"WIN"
 		win_surface = self.font.render(win_text, True, (255, 0, 0))
-		screen.blit(win_surface, (450, 200))
+		screen.blit(win_surface, (520, 250))
 
 		pygame.display.flip()
 	
 	def event(self, event):
-		"""
+		""" 
 		Processa eventos da tela de vitória.
 
 		Parâmetros

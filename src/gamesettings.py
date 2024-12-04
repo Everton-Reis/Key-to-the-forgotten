@@ -1,5 +1,5 @@
 
-#screen and map settings
+#screen e configurações do mapa
 DELTA_GAME = 50
 SCREEN_SIZE = (1200, 1000)
 SCREEN_FULLSCREEN = False
@@ -14,7 +14,7 @@ CAMERA_SPEED = 0
 SHOOT_SPEED = 1000
 SPAWN_SPEED = 15000
 
-#settings
+#configurações do player
 PLAYER_SPAWN = (SCREEN_SIZE[0] // 2 + 200, SCREEN_SIZE[1] - 300)
 PLAYER_INITIAL_NEXT_LEVEL = 100
 PLAYER_LEVEL_MULTIPLIER = 0.2
@@ -30,7 +30,7 @@ PLAYER_INITIAL_LS = 0
 PLAYER_WEAPON_SIZE = (100, 80)
 
 
-#enemies settings
+#configurações dos inimigos
 ENEMY_FLOOR_MULTIPLIER = 0.2
 
 WEAKMOV_SIZE = (25, 100)
@@ -69,7 +69,7 @@ BOSS_ATTACK2_PROJECTS = 20
 BOSS_XP = 1000
 
 
-#buffs settings
+#configurações dos buffs
 NUMBER_BUFFS = 4
 
 DAMAGE_EFFECT = 0.2
@@ -139,7 +139,7 @@ LS_SPRITE = "../assets/sprites/buffs/lifesteal.png"
 KEY_SPRITE = "../assets/sprites/grass.png"
 
 
-#sfx e musica
+#sfx e música
 BACKGROUND_MUSIC = "../assets/sfx/background.mp3"
 BACKGROUND2_MUSIC = "../assets/sfx/background2.mp3"
 DEATH_MUSIC = "../assets/sfx/deathmusic.mp3"

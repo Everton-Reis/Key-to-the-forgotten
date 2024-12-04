@@ -177,23 +177,6 @@ class GameManager:
 		key_map = pygame.key.get_pressed()
 		self.player.on_key_pressed(key_map)
 
-	### essa funçao deve ser retirada
-	def event2(self):
-	
-		events = pygame.event.get()
-		for event in events:
-			if event.type == pygame.QUIT:
-				self.is_running = False
-
-			if event.type == pygame.MOUSEBUTTONDOWN:
-				#pra debug
-				if event.button == 2:
-					self.player.total_exp = self.player.next_level
-
-			self.player.on_event(event, pygame.mouse)
-
-		self.on_key_pressed()
-
 	def verify_death(self, change_state):
 		"""
 		Verifica se o player morreu e altera o estado do jogo para "game_over"
@@ -269,10 +252,3 @@ class GameManager:
 		self.expbar_player.exp_bar_draw(self.screen)
 		if self.lifebar_boss:
 			self.lifebar_boss.life_bar_health_draw(self.screen)
-	
-### deve ser retirados
-if __name__ == '__main__':
-	screen = pygame.display.set_mode((SCREEN_SIZE))
-	teste = []
-	game = GameManager(teste, screen)
-	game.run()
