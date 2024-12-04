@@ -41,9 +41,6 @@ class GameManager:
 		self.keys_collected = 0
 		self.width = SCREEN_SIZE[0]
 		self.height = SCREEN_SIZE[1]
-		#screen_size = (self.width, self.height)
-		#self.screen = pygame.display.set_mode(screen_size)
-		#self.screen.fill((0, 0, 0))
 
 		pygame.mixer.set_num_channels(16)
 		self.background_music = BACKGROUND_MUSIC
@@ -60,7 +57,6 @@ class GameManager:
 		self.player = player.Player(PLAYER_SPAWN[0], PLAYER_SPAWN[1])
 		self.lifebar_player = Life.LifeBar(self.player, "player")
 		self.expbar_player = Life.ExpBar(self.player)	
-
 
 		self.clock = None
 		self.is_running = False
@@ -184,19 +180,19 @@ class GameManager:
 	### essa funçao deve ser retirada
 	def event2(self):
 	
-	    events = pygame.event.get()
-	    for event in events:
-	        if event.type == pygame.QUIT:
-	            self.is_running = False
+		events = pygame.event.get()
+		for event in events:
+			if event.type == pygame.QUIT:
+				self.is_running = False
 
-	        if event.type == pygame.MOUSEBUTTONDOWN:
-	            #pra debug
-	            if event.button == 2:
-	                self.player.total_exp = self.player.next_level
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				#pra debug
+				if event.button == 2:
+					self.player.total_exp = self.player.next_level
 
-	        self.player.on_event(event, pygame.mouse)
+			self.player.on_event(event, pygame.mouse)
 
-	    self.on_key_pressed()
+		self.on_key_pressed()
 
 	def verify_death(self, change_state):
 		"""

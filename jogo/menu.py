@@ -3,7 +3,7 @@ from game import GameManager
 import os
 
 current_dir = os.path.dirname("menu.py")
-font_path = os.path.join(current_dir, "../sprites/menu/PressStart2P_Regular.ttf")
+font_path = os.path.join(current_dir, "../assets/sprites/menu/PressStart2P_Regular.ttf")
 
 pygame.init()
 
