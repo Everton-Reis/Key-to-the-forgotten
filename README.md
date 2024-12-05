@@ -12,8 +12,6 @@ O jogo escolhido é do gênero **top-down shooter/plataforma**, utilizando conce
 
 ## Rodar o jogo
 
-Certifique-se de rodar o jogo em um ambiente virtual para evitar a instalação de pacotes que, no futuro, possam se tornar inutilizáveis ou causar conflitos com outros projetos.
-
 Com o [Python](https://www.python.org/) (preferencialmente versões 3.9 ou superiores) instalado, recomendamos utilizar um [Ambiente Virtual](https://docs.python.org/3.13/library/venv.html), que pode ser inicializado no diretório onde o projeto será executado.
 
 Estando no diretório raiz, execute no terminal:
@@ -27,3 +25,12 @@ Depois de baixar todas os requerimentos, rode o jogo, estando no diretorio src:
 $ python main.py
 ```
 
+# Documentação
+
+A documentação está disponivel no diretorio docs do Key-to-the forgotten
+
+# Fontes
+
+Sprites retiradas [Player](https://craftpix.net/freebies/free-characters-with-melee-attack-pixel-art/), [Background](https://szadiart.itch.io/pixel-fantasy-caves)
+
+Fonte personalizada [Font](https://fonts.google.com/specimen/Press+Start+2P)

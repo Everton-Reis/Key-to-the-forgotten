@@ -16,12 +16,12 @@ class LifeBar(pygame.sprite.Sprite):
 
 		if name == "player":
 			self.x = 10
-			self.y = 45
+			self.y = 75
 			self.health_bar_length = 250
 			self.bar_color = (255, 0, 0)
 		if name == "boss":
 			self.x = 700
-			self.y = 45
+			self.y = 75
 			self.health_bar_length = 450
 			self.bar_color = (0, 255, 0)
 
@@ -43,10 +43,8 @@ class LifeBar(pygame.sprite.Sprite):
 	def update(self):
 		self.max_health = self.player.MAX_HEALTH
 		self.health_ratio = self.max_health / self.health_bar_length
-
 		
 		self.target_health = min(self.player.health, self.max_health)
-		#self.life_bar_health_draw()
 
 	def life_bar_health_draw(self, screen):
 		transition_width = 0
@@ -77,7 +75,7 @@ class ExpBar():
 		self.current_exp = self.player.total_exp
 		self.color = (100,100,100)
 		self.x = 10
-		self.y = 80
+		self.y = 110
 		self.ratio = self.player.next_level / self.length
 		self.change_speed = 5
 		self.target_exp = 0
@@ -93,8 +91,6 @@ class ExpBar():
 
 		if self.target_exp > total_exp:
 			self.target_exp = 0
-			
-		#self.exp_bar_draw()
 
 	def exp_bar_draw(self, screen):
 		total_exp = self.player.next_level - self.player.calc_exp(self.player.level) 
@@ -115,7 +111,7 @@ class ExpBar():
 
 		exp_bar_width = int(min(self.target_exp, total_exp) / self.ratio)
 		exp_bar = pygame.Rect(self.x, self.y, exp_bar_width, 15)
-		transition_bar = pygame.Rect(exp_bar.right, 80, transition_width, 15)
+		transition_bar = pygame.Rect(exp_bar.right, self.y, transition_width, 15)
 		transition_bar.normalize()
 		pygame.draw.rect(screen, self.color, exp_bar, border_radius = 5)
 		pygame.draw.rect(screen, transition_color, transition_bar, border_radius = 5)
