@@ -199,7 +199,7 @@ class GameManager:
 	def draw(self):
 
 		self.screen.fill((58, 58, 81))
-		self.screen.blit(self.background, (0, 0))
+		#self.screen.blit(self.background, (0, 0))
 
 		self.mapa1.draw_plataforms(self.screen, self.plataforms, self.height, self.camera_offset)
 		self.player.draw(self.screen, self.delta, pygame.mouse.get_pos())
@@ -213,7 +213,7 @@ class GameManager:
 
 		font_status = pygame.font.Font(None, 15)
 		floor_text = f"Andar : {self.mapa1.floor - 1}"
-		floor_surface = self.font.render(floor_text, True, (0,0,0))
+		floor_surface = self.font.render(floor_text, True, (255,255,255))
 		self.screen.blit(floor_surface, (10, 900))
 
 		keys_text = f"Chaves: {self.keys_collected}"

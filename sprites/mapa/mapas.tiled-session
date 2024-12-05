@@ -1,0 +1,39 @@
+{
+    "activeFile": "sem título.tmx",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "mapa4-4.tmx": {
+            "scale": 1.1126358695652174,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 334.34118940041515,
+                "y": 308.7263402124802
+            }
+        },
+        "mapa_sprite_tiles.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "sem título.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 17.33333333333337,
+                "y": -30
+            }
+        }
+    },
+    "map.lastUsedFormat": "tmx",
+    "openFiles": [
+        "sem título.tmx",
+        "mapa_sprite_tiles.tsx",
+        "mapa4-4.tmx"
+    ],
+    "project": "mapas.tiled-project",
+    "recentFiles": [
+        "mapa4-4.tmx",
+        "mapa_sprite_tiles.tsx",
+        "sem título.tmx"
+    ]
+}
