@@ -36,6 +36,8 @@ class GameManager:
 
 		self.screen = screen_game
 		self.mapa1 = Map(False)
+		self.background = pygame.image.load("../assets/sprites/mapa/fundo.png")
+		self.background = pygame.transform.scale(self.background, self.screen.get_size())
 
 		# A tela
 		self.keys_collected = 0
@@ -51,6 +53,7 @@ class GameManager:
 		self.font = pygame.font.Font(None, 36) # tamanho 36
 
 		self.plataforms, self.standing_plataforms = self.mapa1.give_plataforms(0, False)
+		self.mapa1.give_cenario(0,False)
 		self.extend = False
 
 		# player
@@ -195,7 +198,9 @@ class GameManager:
 
 	def draw(self):
 
-		self.screen.fill((255, 255, 255))
+		self.screen.fill((58, 58, 81))
+		self.screen.blit(self.background, (0, 0))
+		
 
 		self.mapa1.draw_plataforms(self.screen, self.plataforms, self.height, self.camera_offset)
 		self.player.draw(self.screen, self.delta, pygame.mouse.get_pos())
