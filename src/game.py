@@ -2,7 +2,7 @@ import pygame
 import sys
 import random
 
-sys.path.append("../../implementacoes/buffs")
+#sys.path.append("../../implementacoes/buffs")
 
 import buffs
 

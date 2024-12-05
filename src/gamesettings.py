@@ -6,7 +6,7 @@ SCREEN_FULLSCREEN = False
 ENDLESS_MODE = False
 MAX_FLOOR = 22
 
-BOSS_FLOOR = 6
+BOSS_FLOOR = 1
 BLOCK_SPEED = 2
 BLOCK_SIZE = 60
 
@@ -23,10 +23,10 @@ PLAYER_INITIAL_DAMAGE = 50
 PLAYER_INITIAL_HEALTH = 1000
 PLAYER_INITIAL_MAX_HEALTH = 1000
 PLAYER_INITIAL_SPEED = 4
+PLAYER_DISTANCE_DASH = 150
 PLAYER_INITIAL_DASH = 0
 PLAYER_INITIAL_SHOOT = 0
 PLAYER_INITIAL_LS = 0
-
 PLAYER_WEAPON_SIZE = (75, 50)
 
 
@@ -140,9 +140,9 @@ KEY_SPRITE = "../assets/sprites/key/key_gold.png"
 
 
 #sfx e música
-BACKGROUND_MUSIC = "../assets/sfx/background.mp3"
-BACKGROUND2_MUSIC = "../assets/sfx/background2.mp3"
-DEATH_MUSIC = "../assets/sfx/deathmusic.mp3"
+BACKGROUND_MUSIC = "../assets/sfx/background/background.mp3"
+BACKGROUND2_MUSIC = "../assets/sfx/background/background2.mp3"
+DEATH_MUSIC = "../assets/sfx/player/deathmusic.mp3"
 
 PLAYER_ATTACK_SFX = "../assets/sfx/player/takedamage.mp3"
 PLAYER_LEVEL_SFX = "../assets/sfx/player/levelup.mp3"

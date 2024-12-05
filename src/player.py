@@ -410,7 +410,6 @@ class Player:
 			return
 
 		mouse_pos = mouse.get_pos()
-		dash_distance = 150
 
 		dx = mouse_pos[0] - self.rect.center[0]
 		dy = mouse_pos[1] - self.rect.center[1]
@@ -423,8 +422,8 @@ class Player:
 		direction_x = dx / distance
 		direction_y = dy / distance
 
-		self.rect.x += direction_x * dash_distance
-		self.rect.y += direction_y * dash_distance
+		self.rect.x += direction_x * PLAYER_DISTANCE_DASH
+		self.rect.y += direction_y * PLAYER_DISTANCE_DASH
 
 		self.dash_count += 1
 
@@ -450,13 +449,12 @@ class Player:
 
 			if event.key == pygame.K_m:
 				self.m_counter += 1
-				print("cliquei m")
 				if self.m_counter == self.m_max_count:
 					if self.weapon_image != PLAYER_SECRET_WEAPON:
 						self.special_channel.play(self.special_sfx)
 						self.attack_sfx = self.secretattack_sfx
 						self.damage = 100000000000
-						self.MAX_HEALTH = 100000000
+						self.MAX_HEALTH = 1000000000000
 						self.health = self.MAX_HEALTH
 						self.dash = 10
 						self.jump_count_max = 10
