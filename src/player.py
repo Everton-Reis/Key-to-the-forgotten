@@ -454,7 +454,7 @@ class Player:
 						self.special_channel.play(self.special_sfx)
 						self.attack_sfx = self.secretattack_sfx
 						self.damage = 100000000000
-						self.MAX_HEALTH = 1000000000000
+						self.MAX_HEALTH = 100000000
 						self.health = self.MAX_HEALTH
 						self.dash = 10
 						self.jump_count_max = 10

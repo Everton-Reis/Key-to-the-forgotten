@@ -62,10 +62,7 @@ class LifeBar(pygame.sprite.Sprite):
 		
 		health_bar_width = int(min(self.current_health, self.max_health) / self.health_ratio)
 		health_bar = pygame.Rect(self.x, self.y, health_bar_width, 25)
-		transition_bar = pygame.Rect(health_bar.right, 45, transition_width, 25)
-		transition_bar.normalize()
 		pygame.draw.rect(screen, self.bar_color, health_bar, border_radius = 10)
-		pygame.draw.rect(screen, transition_color, transition_bar, border_radius = 10)
 		pygame.draw.rect(screen, (0, 0, 0), (self.x, self.y, self.health_bar_length, 25), 4, border_radius = 10)
 
 class ExpBar():
