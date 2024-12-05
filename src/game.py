@@ -217,7 +217,7 @@ class GameManager:
 		self.screen.blit(floor_surface, (10, 900))
 
 		keys_text = f"Chaves: {self.keys_collected}"
-		keys_surface = self.font.render(keys_text, True, (0, 0, 0))
+		keys_surface = self.font.render(keys_text, True, (255, 255, 255))
 		self.screen.blit(keys_surface, (self.width - 150, 100))
 
 		self.lifebar_player.life_bar_health_draw(self.screen)
