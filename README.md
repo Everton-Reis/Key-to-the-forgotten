@@ -6,7 +6,7 @@ Repositório para o trabalho A2 da disciplina de Linguagem de Programação.
 
 ## Um pouco sobre o jogo
 
-O objetivo do jogador neste jogo é eliminar o máximo de inimigos possível enquanto sobe uma "torre" e enfrenta três chefões. Os inimigos contribuiem para o personagem principal subir de nivel e adquirir buffs ao longo do jogo, contribuindo para tornar a subida da torre mais acessivel.
+O objetivo do jogador neste jogo é eliminar o máximo de inimigos possível enquanto sobe uma "torre" e enfrenta três chefões. Os inimigos contribuiem para o personagem principal subir de nível e adquirir buffs ao longo do jogo, contribuindo para tornar a subida da torre mais acessível.
 
 O jogo escolhido é do gênero **top-down shooter/plataforma**, utilizando conceitos de armas, jogador, mapas, inimigos, chefes, etc. A importância desses elementos se deve ao fato de que eles foram criados utilizando classes, conceito central da disciplina de Linguagem de Programação, que motivou o desenvolvimento deste jogo.
 
@@ -34,3 +34,6 @@ A documentação está disponivel no diretorio docs do src
 Sprites retiradas [Player](https://craftpix.net/freebies/free-characters-with-melee-attack-pixel-art/), [Background](https://szadiart.itch.io/pixel-fantasy-caves)
 
 Fonte personalizada [Font](https://fonts.google.com/specimen/Press+Start+2P)
+
+Músicas [Música](https://pixabay.com/pt/)
+

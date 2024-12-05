@@ -168,14 +168,14 @@ class Map:
 					plataform_rect = None
 					if extend:
 						plataform_rect = pygame.Rect(
-							column_index * self.block_size + SCREEN_SIZE[0] // 6,
+							column_index * self.block_size + 700 // 6,
 							-line_index * self.block_size - self.block_size * 1.5,
 							self.block_size,
 							self.block_size
 						)
 					else:
 						plataform_rect = pygame.Rect(
-							column_index * self.block_size + SCREEN_SIZE[0] // 6,
+							column_index * self.block_size + 700 // 6,
 							-line_index * self.block_size + SCREEN_SIZE[1],
 							self.block_size,
 							self.block_size
