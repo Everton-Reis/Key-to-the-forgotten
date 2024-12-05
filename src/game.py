@@ -195,7 +195,7 @@ class GameManager:
 
 	def draw(self):
 
-		self.screen.fill((255, 255, 255))
+		self.screen.fill((58, 58, 81))
 
 		self.mapa1.draw_plataforms(self.screen, self.plataforms, self.height, self.camera_offset)
 		self.player.draw(self.screen, self.delta, pygame.mouse.get_pos())
