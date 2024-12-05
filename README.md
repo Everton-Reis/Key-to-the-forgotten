@@ -35,5 +35,5 @@ Sprites retiradas [Player](https://craftpix.net/freebies/free-characters-with-me
 
 Fonte personalizada [Font](https://fonts.google.com/specimen/Press+Start+2P)
 
-Músicas [Música](https://pixabay.com/pt/)
+Músicas [Música_geral](https://pixabay.com/pt/) e [Música_Menu](https://www.youtube.com/watch?v=T3zshby5m3A&feature=youtu.be)
 
